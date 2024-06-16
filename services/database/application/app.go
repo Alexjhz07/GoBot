@@ -22,33 +22,26 @@ type DatabaseApp struct {
 	db     *sql.DB
 }
 
-func New() *DatabaseApp {
-	app := &DatabaseApp{
-		router: loadRoutes(),
+func New() (*DatabaseApp, error) {
+	app := &DatabaseApp{}
+
+	if err := app.loadDatabase(); err != nil {
+		return nil, err
 	}
 
-	return app
+	app.loadRoutes()
+
+	return app, nil
 }
 
-func (a *DatabaseApp) Start(ctx context.Context) error {
-	server := http.Server{
-		Addr:    ":3815",
-		Handler: a.router,
-	}
-
+func (a *DatabaseApp) loadDatabase() error {
+	fmt.Println("Loaded database")
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"dbname=%s sslmode=disable", host, port, user, dbname)
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		return fmt.Errorf("failed to open database connection")
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			fmt.Println("failed to close database connection: ", err)
-		} else {
-			fmt.Println("database connnection closed successfully")
-		}
-	}()
 
 	err = db.Ping()
 	if err != nil {
@@ -57,10 +50,27 @@ func (a *DatabaseApp) Start(ctx context.Context) error {
 
 	a.db = db
 
+	return nil
+}
+
+func (a *DatabaseApp) Start(ctx context.Context) error {
+	server := http.Server{
+		Addr:    ":3815",
+		Handler: a.router,
+	}
+
+	defer func() {
+		if err := a.db.Close(); err != nil {
+			fmt.Println("failed to close database connection: ", err)
+		} else {
+			fmt.Println("database connnection closed successfully")
+		}
+	}()
+
 	ch := make(chan error, 1)
 
 	go func() {
-		err = server.ListenAndServe()
+		err := server.ListenAndServe()
 		if err != nil {
 			ch <- fmt.Errorf("failed to start database server: %w", err)
 		}
@@ -70,7 +80,7 @@ func (a *DatabaseApp) Start(ctx context.Context) error {
 	fmt.Println("[service] database up success")
 
 	select {
-	case err = <-ch:
+	case err := <-ch:
 		return err
 	case <-ctx.Done():
 		timeout, cancel := context.WithTimeout(context.Background(), time.Second*10)

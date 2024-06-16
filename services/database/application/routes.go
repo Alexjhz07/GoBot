@@ -2,23 +2,27 @@ package application
 
 import (
 	"Alexjhz07/GoBot/services/database/handler"
+	"fmt"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func loadRoutes() *chi.Mux {
+func (a *DatabaseApp) loadRoutes() {
 	router := chi.NewRouter()
 
 	router.Use(middleware.Logger)
 
-	router.Route("/query", loadQueryRoutes)
+	router.Route("/query", a.loadQueryRoutes)
 
-	return router
+	a.router = router
 }
 
-func loadQueryRoutes(router chi.Router) {
-	queryHandler := &handler.Query{}
+func (a *DatabaseApp) loadQueryRoutes(router chi.Router) {
+	fmt.Println("Loaded query routes")
+	queryHandler := &handler.Query{
+		Database: a.db,
+	}
 
 	router.Post("/", queryHandler.AnyQuery)
 }
