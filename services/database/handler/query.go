@@ -19,13 +19,17 @@ type Query struct {
 func (q *Query) AnyQuery(w http.ResponseWriter, r *http.Request) {
 	parsedRequest, err := parseRequestJSON(r)
 	if err != nil {
-		fmt.Println("error decoding incoming request: %w", err)
+		fmt.Println("error decoding incoming request: ", err)
+		w.WriteHeader(400)
 		return
 	}
 
 	_, err = q.Database.Exec(parsedRequest.Query, parsedRequest.Arguments...)
 	if err != nil {
 		fmt.Println("error executing statement: ", err)
+		w.WriteHeader(400)
+	} else {
+		w.WriteHeader(200)
 	}
 }
 
