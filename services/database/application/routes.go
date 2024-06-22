@@ -13,16 +13,16 @@ func (a *DatabaseApp) loadRoutes() {
 
 	router.Use(middleware.Logger)
 
-	router.Route("/query", a.loadQueryRoutes)
+	router.Route("/api/v1", a.loadV1Routes)
 
 	a.router = router
 }
 
-func (a *DatabaseApp) loadQueryRoutes(router chi.Router) {
+func (a *DatabaseApp) loadV1Routes(router chi.Router) {
 	fmt.Println("Loaded query routes")
 	queryHandler := &handler.Query{
 		Database: a.db,
 	}
 
-	router.Post("/", queryHandler.AnyQuery)
+	router.Post("/exec", queryHandler.SimpleExec)
 }
