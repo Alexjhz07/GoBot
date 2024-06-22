@@ -64,7 +64,6 @@ It may be worth dispatching a thread for each experience entry.
 | Column name         | Type        | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES                |
 | ------------------- | ----------- | ----------- | ----------- | ----------------- | ------------------------- |
 | user_id             | BIGINT      | PRIMARY KEY |             |                   | user_information(user_id) |
-| experience_cooidown | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
 | bank_daily          | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
 | bank_weekly         | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
 | bank_monthly        | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
@@ -72,7 +71,6 @@ It may be worth dispatching a thread for each experience entry.
 ```sql
 CREATE TABLE public.user_timer (
 	user_id bigint NOT NULL,
-	experience_cooldown timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	bank_daily timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	bank_weekly timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	bank_monthly timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -81,9 +79,10 @@ CREATE TABLE public.user_timer (
 );
 ```
 
-These are loaded once at the start of the bot and the experience cooldown will be cached for quick use.
-However, writes will occur frequently. This will likely run on the same thread as user_experiences.
-Rewrites to bank timers are infrequent enough that this should not matter.
+These are loaded once at the start of the bot and cached for quick use.
+This table should not be used for things with inconsequential short cooldowns. 
+Short cooldowns should be cached in memory instead.
+Rewrites to bank timers are infrequent, therefore, they belong in this table.
 
 ## bank_transactions
 
