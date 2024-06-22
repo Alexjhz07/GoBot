@@ -19,10 +19,10 @@ func (a *DatabaseApp) loadRoutes() {
 }
 
 func (a *DatabaseApp) loadV1Routes(router chi.Router) {
-	fmt.Println("Loaded query routes")
-	queryHandler := &handler.Query{
+	execHandler := &handler.Exec{
 		Database: a.db,
 	}
 
-	router.Post("/exec", queryHandler.SimpleExec)
+	router.Post("/exec", execHandler.SimpleExec)
+	fmt.Println("Loaded query routes")
 }

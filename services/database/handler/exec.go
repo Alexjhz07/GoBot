@@ -7,16 +7,16 @@ import (
 	"net/http"
 )
 
-type QueryRequest struct {
+type ExecRequest struct {
 	Query     []string `json:"queries"`
 	Arguments [][]any  `json:"arguments,omitempty"`
 }
 
-type Query struct {
+type Exec struct {
 	Database *sql.DB
 }
 
-func (q *Query) SimpleExec(w http.ResponseWriter, r *http.Request) {
+func (q *Exec) SimpleExec(w http.ResponseWriter, r *http.Request) {
 	parsedRequest, err := parseRequestJSON(r)
 	if err != nil {
 		fmt.Println("error decoding incoming request: ", err)
@@ -48,10 +48,10 @@ func (q *Query) SimpleExec(w http.ResponseWriter, r *http.Request) {
 }
 
 // Parser, consider moving to utils area in the future
-func parseRequestJSON(r *http.Request) (*QueryRequest, error) {
+func parseRequestJSON(r *http.Request) (*ExecRequest, error) {
 	decoder := json.NewDecoder(r.Body)
 
-	ret := &QueryRequest{}
+	ret := &ExecRequest{}
 	err := decoder.Decode(ret)
 	if err != nil {
 		return nil, err
