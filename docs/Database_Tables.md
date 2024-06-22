@@ -14,6 +14,17 @@ These tables require a row to be inserted for each joining user:
 
 A commonly occurring key is the `user_id`. This key is always to be set to reference the foreign-key in `user_information`.
 
+# User Creation
+
+Certain tables must have an entry with certain fields set when a user is added to the system.
+Please refer to the [List of Tables](list-of-tables) for more info on the entire structure
+
+- `user_information` - `user_id`, `username` (This entry must be created first as it houses the `user_id` referenced by other tables)
+- `user_experience` - `user_id`
+- `user_timer` - `user_id`
+
+# List of Tables
+
 ## user_information [Small]
 
 | Column name | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES |
@@ -113,12 +124,12 @@ CREATE TABLE public.bank_transactions (
   - `flip`: Money won or lost from a coin flip
   - `wordle`: Money won from winning a wordle game
 
-The name `transaction` is only used in the sense of a bank transaction.  
-Transactions as in grouped requests in the psql sense are denoted in the `group_uuid` column.  
+The name `transaction` is only used in the sense of a bank transaction.
+Transactions as in grouped requests in the psql sense are denoted in the `group_uuid` column.
 
-Note that the bank transactions are currently used for everything money related to make things easy.  
-In the future, it may be wise to have a separate table for summarized account info.  
-This will allow us to retrieve balances and aggregate info without needed to calculate it each time.  
+Note that the bank transactions are currently used for everything money related to make things easy.
+In the future, it may be wise to have a separate table for summarized account info.
+This will allow us to retrieve balances and aggregate info without needed to calculate it each time.
 
 ## stock_transactions
 
