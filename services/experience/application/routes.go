@@ -12,7 +12,7 @@ func (a *App) loadRoutes() {
 
 	router.Use(middleware.Logger)
 
-	router.Route("/experience", a.loadExperienceRoutes)
+	router.Route("/api/v1", a.loadExperienceRoutes)
 
 	a.router = router
 }
@@ -20,5 +20,5 @@ func (a *App) loadRoutes() {
 func (a *App) loadExperienceRoutes(router chi.Router) {
 	experienceHandler := &handler.Experience{}
 
-	router.Patch("/", experienceHandler.ModifyExperience)
+	router.Patch("/experience", experienceHandler.ModifyExperience)
 }

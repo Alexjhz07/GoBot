@@ -22,15 +22,13 @@ func (q *Experience) ModifyExperience(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := `UPDATE user_experience ` +
-		`SET experience = experience + $1 ` +
-		`WHERE user_id = $2`
+	query := `UPDATE user_experience SET experience = experience + $1 WHERE user_id = $2`
 	arguments := fmt.Sprintf(`[%d, %d]`, parsedRequest.Delta, parsedRequest.Id)
-	queryString := fmt.Sprintf(`{"query": %q, "arguments": %s}`, query, arguments)
+	queryString := fmt.Sprintf(`{"queries": [%q], "arguments": [%s]}`, query, arguments)
 
 	requestBody := bytes.NewReader([]byte(queryString))
 
-	response, err := http.Post("http://localhost:3815/query", "application/json", requestBody)
+	response, err := http.Post("http://localhost:3815/api/v1/exec", "application/json", requestBody)
 	if err != nil {
 		fmt.Println("error sending request to database: ", err)
 		w.WriteHeader(http.StatusServiceUnavailable)
