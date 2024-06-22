@@ -6,12 +6,6 @@ Tables that do not expect many rows, such as those that are per user or per day,
 `VARCHAR(255)` is used throughout as, from what I've read, it has negligible performance differences compared to lesser values.
 I do not want to deal with formating the whole database if Discord suddenly decides that usernames can be 200 characters long.
 
-These tables require a row to be inserted for each joining user:
-
-- `user_information`
-- `user_experience`
-- `user_timer`
-
 A commonly occurring key is the `user_id`. This key is always to be set to reference the foreign-key in `user_information`.
 
 # User Creation
