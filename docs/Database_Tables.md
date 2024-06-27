@@ -15,7 +15,7 @@ Please refer to the [List of Tables](list-of-tables) for more info on the entire
 
 - `user_information` - `user_id`, `username` (This entry must be created first as it houses the `user_id` referenced by other tables)
 - `user_experience` - `user_id`
-- `user_timer` - `user_id`
+- `bank_timer` - `user_id`
 
 # List of Tables
 
@@ -59,7 +59,7 @@ CREATE TABLE public.user_experience (
 This will be operated upon with a write quite frequently and it does not interfere with any other operations.
 It may be worth dispatching a thread for each experience entry.
 
-## user_timer [Small]
+## bank_timer [Small]
 
 | Column name         | Type        | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES                |
 | ------------------- | ----------- | ----------- | ----------- | ----------------- | ------------------------- |
@@ -69,7 +69,7 @@ It may be worth dispatching a thread for each experience entry.
 | bank_monthly        | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
 
 ```sql
-CREATE TABLE public.user_timer (
+CREATE TABLE public.bank_timer (
 	user_id bigint NOT NULL,
 	bank_daily timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	bank_weekly timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -80,9 +80,7 @@ CREATE TABLE public.user_timer (
 ```
 
 These are loaded once at the start of the bot and cached for quick use.
-This table should not be used for things with inconsequential short cooldowns. 
-Short cooldowns should be cached in memory instead.
-Rewrites to bank timers are infrequent, therefore, they belong in this table.
+Rewrites to bank timers are infrequent and must be persisted. That is why this table exists.
 
 ## bank_transactions
 
