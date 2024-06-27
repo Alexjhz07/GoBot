@@ -1,22 +1,11 @@
 package handler
 
 import (
-	"database/sql"
-	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
-type ExecRequest struct {
-	Query     []string `json:"queries"`
-	Arguments [][]any  `json:"arguments,omitempty"`
-}
-
-type Exec struct {
-	Database *sql.DB
-}
-
-func (q *Exec) SimpleExec(w http.ResponseWriter, r *http.Request) {
+func (db *Database) SimpleExec(w http.ResponseWriter, r *http.Request) {
 	parsedRequest, err := parseRequestJSON(r)
 	if err != nil {
 		fmt.Println("error decoding incoming request: ", err)
@@ -24,7 +13,7 @@ func (q *Exec) SimpleExec(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx, err := q.Database.Begin()
+	tx, err := db.Database.Begin()
 	if err != nil {
 		fmt.Println("error starting transaction")
 		return
@@ -33,8 +22,6 @@ func (q *Exec) SimpleExec(w http.ResponseWriter, r *http.Request) {
 	defer tx.Rollback()
 
 	for i := 0; i < len(parsedRequest.Query); i++ {
-		fmt.Println(parsedRequest.Query[i])
-		fmt.Println(parsedRequest.Arguments[i]...)
 		_, err = tx.Exec(parsedRequest.Query[i], parsedRequest.Arguments[i]...)
 		if err != nil {
 			fmt.Println("error executing statement: ", err)
@@ -45,25 +32,4 @@ func (q *Exec) SimpleExec(w http.ResponseWriter, r *http.Request) {
 
 	tx.Commit()
 	w.WriteHeader(http.StatusOK)
-}
-
-// Parser, consider moving to utils area in the future
-func parseRequestJSON(r *http.Request) (*ExecRequest, error) {
-	decoder := json.NewDecoder(r.Body)
-
-	ret := &ExecRequest{}
-	err := decoder.Decode(ret)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(ret.Query) == 0 {
-		return nil, fmt.Errorf("length of query is 0")
-	}
-
-	if len(ret.Query) != len(ret.Arguments) {
-		return nil, fmt.Errorf("length mismatch between query and argument expected %d received %d", len(ret.Query), len(ret.Arguments))
-	}
-
-	return ret, nil
 }

@@ -2,7 +2,6 @@ package application
 
 import (
 	"Alexjhz07/GoBot/services/database/handler"
-	"fmt"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -19,10 +18,10 @@ func (a *DatabaseApp) loadRoutes() {
 }
 
 func (a *DatabaseApp) loadV1Routes(router chi.Router) {
-	execHandler := &handler.Exec{
+	databaseHandler := &handler.Database{
 		Database: a.db,
 	}
 
-	router.Post("/exec", execHandler.SimpleExec)
-	fmt.Println("Loaded query routes")
+	router.Post("/query", databaseHandler.SimpleExec)
+	router.Get("/query", databaseHandler.SimpleQuery)
 }

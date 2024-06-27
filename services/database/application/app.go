@@ -35,7 +35,6 @@ func New() (*DatabaseApp, error) {
 }
 
 func (a *DatabaseApp) loadDatabase() error {
-	fmt.Println("Loaded database")
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"dbname=%s sslmode=disable", host, port, user, dbname)
 
 	db, err := sql.Open("postgres", psqlInfo)
