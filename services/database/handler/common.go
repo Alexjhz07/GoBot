@@ -17,7 +17,7 @@ type Database struct {
 }
 
 // Takes in an http request and parses it into a DatabaseRequest
-// Returns decoding or argument length errors if they occur
+// Returns decoding error or argument length error if they occur
 func parseRequestJSON(r *http.Request) (*DatabaseRequest, error) {
 	decoder := json.NewDecoder(r.Body)
 
