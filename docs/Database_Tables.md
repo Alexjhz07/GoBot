@@ -56,8 +56,7 @@ CREATE TABLE public.user_experience (
 );
 ```
 
-This will be operated upon with a write quite frequently and it does not interfere with any other operations.
-It may be worth dispatching a thread for each experience entry.
+The cooldown can be reset on launch and stored in memory as it's fairly inconsequential.
 
 ## bank_timer [Small]
 
