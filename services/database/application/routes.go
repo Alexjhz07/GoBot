@@ -22,6 +22,6 @@ func (a *DatabaseApp) loadV1Routes(router chi.Router) {
 		Database: a.db,
 	}
 
-	router.Post("/query", databaseHandler.SimpleExec)
-	router.Get("/query", databaseHandler.SimpleQuery)
+	router.Post("/exec", databaseHandler.SimpleExec)
+	router.Post("/query", databaseHandler.SimpleQuery)
 }
