@@ -16,6 +16,10 @@ type Database struct {
 	Database *sql.DB
 }
 
+type DatabaseResponse struct {
+	Responses [][]any `json:"responses,omitempty"`
+}
+
 // Takes in an http request and parses it into a DatabaseRequest
 // Returns decoding error or argument length error if they occur
 func parseRequestJSON(r *http.Request) (*DatabaseRequest, error) {
