@@ -41,7 +41,7 @@ func (db *Database) SimpleQuery(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Dynamically create row buffer for our query
-		row_buffer := make([]interface{}, len(column_names))
+		row_buffer := make([]string, len(column_names))
 		row_buffer_ptr := make([]interface{}, len(column_names))
 		for i := range len(column_names) {
 			row_buffer_ptr[i] = &row_buffer[i]
