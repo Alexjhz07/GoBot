@@ -19,6 +19,8 @@ func (a *App) loadRoutes() {
 
 func (a *App) loadBankingRoutes(router chi.Router) {
 	transactionHandler := &handler.Transaction{}
+	accountHandler := &handler.Account{}
 
 	router.Post("/transaction", transactionHandler.PostTransaction)
+	router.Post("/account", accountHandler.PostAccount)
 }

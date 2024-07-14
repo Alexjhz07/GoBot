@@ -24,6 +24,10 @@ async def load():
 
 async def main():
     bot.locked_users = {}
+    bot.routes = {
+        'experience': 'http://localhost:3816/api/v1',
+        'banking': 'http://localhost:3817/api/v1',
+    }
     bot.help_command = MinimalHelpCommand(no_category='Commands')
     await load()
     await bot.start(TOKEN) # Note that this will block until the bot stops running
