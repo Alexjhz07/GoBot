@@ -2,7 +2,6 @@ package handler
 
 import (
 	"Alexjhz07/GoBot/services/blankslate/data"
-	"encoding/json"
 	"log"
 	"net/http"
 )
@@ -16,12 +15,24 @@ func NewProducts(l *log.Logger) *Products {
 }
 
 func (p *Products) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		p.GetProducts(rw, r)
+	} else if r.Method == "POST" {
+		p.PostProducts(rw, r)
+	} else {
+		http.Error(rw, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func (p *Products) GetProducts(rw http.ResponseWriter, r *http.Request) {
 	lp := data.GetProducts()
 
-	bytes, err := json.Marshal(lp)
+	err := lp.ToJSON(rw)
 	if err != nil {
 		http.Error(rw, "Could not marshal json: ", http.StatusBadRequest)
 	}
+}
 
-	rw.Write(bytes)
+func (p *Products) PostProducts(rw http.ResponseWriter, r *http.Request) {
+	rw.Write([]byte("Posted!"))
 }
