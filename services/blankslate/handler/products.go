@@ -15,16 +15,17 @@ func NewProducts(l *log.Logger) *Products {
 }
 
 func (p *Products) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+	p.l.Println("Handle GET")
 	if r.Method == "GET" {
-		p.GetProducts(rw, r)
+		p.getProducts(rw, r)
 	} else if r.Method == "POST" {
-		p.PostProducts(rw, r)
+		p.addProducts(rw, r)
 	} else {
 		http.Error(rw, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-func (p *Products) GetProducts(rw http.ResponseWriter, r *http.Request) {
+func (p *Products) getProducts(rw http.ResponseWriter, r *http.Request) {
 	lp := data.GetProducts()
 
 	err := lp.ToJSON(rw)
@@ -33,6 +34,16 @@ func (p *Products) GetProducts(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (p *Products) PostProducts(rw http.ResponseWriter, r *http.Request) {
-	rw.Write([]byte("Posted!"))
+func (p *Products) addProducts(rw http.ResponseWriter, r *http.Request) {
+	p.l.Println("Handle POST")
+
+	prod := &data.Product{}
+	err := prod.FromJSON(r.Body)
+	if err != nil {
+		http.Error(rw, "Could not unmarshal json: ", http.StatusBadRequest)
+		return
+	}
+	data.AddProduct(prod)
+
+	p.l.Printf("Prod: %#v", prod)
 }

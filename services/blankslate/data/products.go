@@ -41,9 +41,19 @@ func GetProducts() Products {
 	return productList
 }
 
+func AddProduct(p *Product) {
+	p.ID = productList[len(productList)-1].ID + 1
+	productList = append(productList, p)
+}
+
 type Products []*Product
 
 func (p *Products) ToJSON(w io.Writer) error {
 	e := json.NewEncoder(w)
 	return e.Encode(p)
+}
+
+func (p *Product) FromJSON(r io.Reader) error {
+	d := json.NewDecoder(r)
+	return d.Decode(p)
 }
