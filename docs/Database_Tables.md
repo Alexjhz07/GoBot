@@ -93,13 +93,17 @@ Rewrites to bank timers are infrequent and must be persisted. That is why this t
 | group_uuid         | UUID         |             | NOT NULL    |                   |                           |
 
 ```sql
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+```
+
+```sql
 CREATE TABLE public.bank_transactions (
 	transaction_id serial NOT NULL,
 	transaction_type varchar NOT NULL,
 	transaction_amount bigint NOT NULL,
 	user_id bigint NOT NULL,
 	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	group_uuid uuid NOT NULL,
+	group_uuid uuid DEFAULT uuid_generate_v1() NOT NULL,
 	CONSTRAINT bank_transactions_pk PRIMARY KEY (transaction_id),
 	CONSTRAINT bank_transactions_user_information_fk FOREIGN KEY (user_id) REFERENCES public.user_information(user_id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );

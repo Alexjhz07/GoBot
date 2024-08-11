@@ -10,6 +10,7 @@ export default class Wordle {
     private current_word: string = "APPLE";
     private current_word_list: string[] = ["A", "P", "P", "L", "E"];
     private loaded: boolean = false;
+    private win_rewards: number[] = [4000, 2000, 1000, 500, 250, 125];
 
     constructor(game_words_file='valid_wordle_game_words.txt', entry_words_file='valid_wordle_entry_words.txt') {
         this.word_list = fs.readFileSync(game_words_file, { encoding: 'utf-8', flag: 'r' }).split('\n')
@@ -28,12 +29,35 @@ export default class Wordle {
             }
         }
 
-        guess = String(guess).toUpperCase()
+        try {
+            guess = String(guess).toUpperCase()
+            user_id = Number(user_id)
+        } catch (e: any) {
+            return {"status": "error", "message": `Type cast failed for user_id or guess: ${e.message}`}
+        }
+        
         if (this.players[user_id]?.win_flag) return {"status": "already-won", "guess_count": this.players[user_id].guess_count}
         if (this.players[user_id]?.guess_count >= 6) return {"status": "out-of-tries", "guess_count": this.players[user_id].guess_count}
 
         if (!this.players[user_id]) this.players[user_id] = {"win_flag": 0, "guess_count": 0}
         if (!(this.entry_words[guess] || this.game_words[guess])) return {"status": "invalid-guess"};
+        
+        if (this.current_word === guess) {
+            try {
+                await axios.post("http://localhost:3815/api/v1/exec", {"queries": [
+                    "INSERT INTO wordle_games (user_id, guess_word, seed, win_flag) VALUES ($1, $2, $3, True)",
+                    "INSERT INTO bank_transactions (transaction_type, transaction_amount, user_id) VALUES ($1, $2, $3)"
+                ], "arguments": [
+                    [user_id, guess, this.date_string],
+                    ["wordle", this.win_rewards[this.players[user_id].guess_count], user_id]
+                ]})
+            } catch (e: any) {
+                return {"status": "error", "message": `Correct guess but error communicating with db for reward: ${e.message}`}
+            }
+            this.players[user_id].win_flag = 1
+            this.players[user_id].guess_count += 1
+            return {"status": "win", "guess": this.current_word_list, "matching": this.current_word_list.length, "misplaced": 0, "guess_count": this.players[user_id].guess_count, "result": ["#", "#", "#", "#", "#"]}
+        }
 
         try {
             await axios.post("http://localhost:3815/api/v1/exec", {"queries": [
@@ -44,12 +68,7 @@ export default class Wordle {
         } catch (e: any) {
             return {"status": "error", "message": `error communicating with db: ${e.message}`}
         }
-
         this.players[user_id].guess_count += 1
-        if (this.current_word === guess) {
-            this.players[user_id].win_flag = 1
-            return {"status": "win", "guess_count": this.players[user_id].guess_count, "guess": guess}
-        }
 
         let tracker: any = {}
         for (let i = 0; i < this.current_word.length; i++) !tracker[this.current_word[i]] ? tracker[this.current_word[i]] = 1 : tracker[this.current_word[i]] += 1
@@ -129,8 +148,8 @@ export default class Wordle {
                 [this.date_string],
                 [this.date_string]
             ]})
-            res.data.responses[0].map((i: any) => this.players[Number(i.user_id)] = {"win_flag": 0, "guess_count": Number(i.count)})
-            res.data.responses[1].map((i: any) => this.players[Number(i.user_id)].win_flag = 1)
+            res.data.responses[0].map((i: any) => this.players[i.user_id] = {"win_flag": 0, "guess_count": Number(i.count)})
+            res.data.responses[1].map((i: any) => this.players[i.user_id].win_flag = 1)
         } catch (e: any) {
             throw new Error(`error communicating with db: ${e.message}`)
         }
