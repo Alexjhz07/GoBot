@@ -60,12 +60,12 @@ The cooldown can be reset on launch and stored in memory as it's fairly inconseq
 
 ## bank_timer [Small]
 
-| Column name         | Type        | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES                |
-| ------------------- | ----------- | ----------- | ----------- | ----------------- | ------------------------- |
-| user_id             | BIGINT      | PRIMARY KEY |             |                   | user_information(user_id) |
-| bank_daily          | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
-| bank_weekly         | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
-| bank_monthly        | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
+| Column name  | Type        | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES                |
+| ------------ | ----------- | ----------- | ----------- | ----------------- | ------------------------- |
+| user_id      | BIGINT      | PRIMARY KEY |             |                   | user_information(user_id) |
+| bank_daily   | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
+| bank_weekly  | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
+| bank_monthly | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
 
 ```sql
 CREATE TABLE public.bank_timer (
@@ -131,6 +131,7 @@ TODO
 | ----------- | ------------ | ----------- | ----------- | ----------------- | ---------- |
 | game_id     | SERIAL       | PRIMARY KEY |             |                   |            |
 | word        | VARCHAR(255) |             | NOT NULL    |                   |            |
+| date_string | VARCHAR(255) |             | NOT NULL    |                   |            |
 | created_at  | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |            |
 
 TODO
@@ -142,6 +143,7 @@ TODO
 | guess_id    | SERIAL       | PRIMARY KEY |             |                   |                           |
 | user_id     | BIGINT       |             | NOT NULL    |                   | user_information(user_id) |
 | guess_word  | VARCHAR(255) |             | NOT NULL    |                   |                           |
+| date_string | VARCHAR(255) |             | NOT NULL    |                   |                           |
 | created_at  | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
 
 TODO

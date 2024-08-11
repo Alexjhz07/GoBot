@@ -2,3 +2,6 @@
 test/
 .env
 cluster/
+
+# For Node Services
+node_modules/
