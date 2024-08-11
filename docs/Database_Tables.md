@@ -129,9 +129,8 @@ TODO
 
 | Column name | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES |
 | ----------- | ------------ | ----------- | ----------- | ----------------- | ---------- |
-| game_id     | SERIAL       | PRIMARY KEY |             |                   |            |
+| seed        | VARCHAR(255) | PRIMARY KEY |             |                   |            |
 | word        | VARCHAR(255) |             | NOT NULL    |                   |            |
-| date_string | VARCHAR(255) |             | NOT NULL    |                   |            |
 | created_at  | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |            |
 
 TODO
@@ -143,7 +142,8 @@ TODO
 | guess_id    | SERIAL       | PRIMARY KEY |             |                   |                           |
 | user_id     | BIGINT       |             | NOT NULL    |                   | user_information(user_id) |
 | guess_word  | VARCHAR(255) |             | NOT NULL    |                   |                           |
-| date_string | VARCHAR(255) |             | NOT NULL    |                   |                           |
+| seed        | VARCHAR(255) |             | NOT NULL    |                   |                           |
+| win_flag    | BOOLEAN      |             | NOT NULL    | FALSE             |                           |
 | created_at  | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
 
 TODO
