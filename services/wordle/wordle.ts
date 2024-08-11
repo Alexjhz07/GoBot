@@ -29,7 +29,7 @@ export default class Wordle {
             }
         }
 
-        guess = guess.toUpperCase()
+        guess = String(guess).toUpperCase()
         if (this.players[user_id]?.win_flag) return {"status": "already-won", "guess_count": this.players[user_id].guess_count}
         if (this.players[user_id]?.guess_count >= 6) return {"status": "out-of-tries", "guess_count": this.players[user_id].guess_count}
 
