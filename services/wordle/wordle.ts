@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import axios from 'axios';
-import { log } from 'console';
 
 export default class Wordle {
     private word_list: string[] = []
