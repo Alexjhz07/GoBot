@@ -78,7 +78,7 @@ export default class Wordle {
 
         let matching = 0
         let misplaced = 0
-        // 1 Record Matching Characters
+        // Record Matching Characters
         for (let i = 0; i < this.current_word.length; i++) {
             if (guess_list[i] === this.current_word_list[i]) {
                 result[i] = "#"
@@ -88,7 +88,7 @@ export default class Wordle {
                 result[i] = "."
             }
         }
-        // 2 Record Misplaced Characters
+        // Record Misplaced Characters
         for (let i = 0; i < this.current_word.length; i++) {
             if (guess_list[i] !== this.current_word_list[i] && tracker[guess_list[i]] != undefined && tracker[guess_list[i]] > 0) {
                 result[i] = "?"
