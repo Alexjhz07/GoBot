@@ -40,13 +40,20 @@ CREATE TABLE public.user_information (
 );
 ```
 
+For the current time being, this table will always contain the `default user` with `user_id` `-1` as a placeholder.  
+This is useful for someone outside of "the group" to browse the site with limited access or for a new user to browse.  
+
+```sql
+INSERT INTO user_information (user_id, username) VALUES (-1, 'Default User')
+```
+
 ## user_authentication [Small]
 
 | Column name | Type         | Properties  | CONSTRAINTS | DEFAULT | REFERENCES                |
 | ----------- | ------------ | ----------- | ----------- | ------- | ------------------------- |
 | email       | VARCHAR(255) | PRIMARY KEY |             |         |                           |
 | bcrypt      | VARCHAR(255) |             | NOT NULL    |         |                           |
-| user_id     | BIGINT       |             | NOT NULL    |         | user_information(user_id) |
+| user_id     | BIGINT       |             | NOT NULL    | -1      | user_information(user_id) |
 
 ```sql
 CREATE TABLE public.user_authentication (
