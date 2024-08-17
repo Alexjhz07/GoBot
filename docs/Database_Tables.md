@@ -40,6 +40,26 @@ CREATE TABLE public.user_information (
 );
 ```
 
+## user_authentication [Small]
+
+| Column name | Type         | Properties  | CONSTRAINTS | DEFAULT | REFERENCES                |
+| ----------- | ------------ | ----------- | ----------- | ------- | ------------------------- |
+| email       | VARCHAR(255) | PRIMARY KEY |             |         |                           |
+| bcrypt      | VARCHAR(255) |             | NOT NULL    |         |                           |
+| user_id     | BIGINT       |             | NOT NULL    |         | user_information(user_id) |
+
+```sql
+CREATE TABLE public.user_authentication (
+	email varchar NOT NULL,
+	bcrypt varchar NOT NULL,
+	user_id bigint NOT NULL,
+	CONSTRAINT user_authentication_pk PRIMARY KEY (user_id)
+);
+```
+
+Note that we use bcrypt to hash the passwords, for which a salt is included in the output.  
+Thus, we do not require a separate column to store salts.
+
 ## user_experience [Small]
 
 | Column name | Type   | Properties  | CONSTRAINTS | DEFAULT | REFERENCES                |
