@@ -60,7 +60,7 @@ CREATE TABLE public.user_authentication (
 	email varchar NOT NULL,
 	bcrypt varchar NOT NULL,
 	user_id bigint NOT NULL,
-	CONSTRAINT user_authentication_pk PRIMARY KEY (user_id)
+	CONSTRAINT user_authentication_pk PRIMARY KEY (email)
 );
 ```
 
