@@ -178,3 +178,26 @@ TODO
 | created_at  | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
 
 TODO
+
+## community_posts
+
+| Column name | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES                |
+| ----------- | ------------ | ----------- | ----------- | ----------------- | ------------------------- |
+| post_id     | SERIAL       | PRIMARY KEY |             |                   |                           |
+| user_id     | BIGINT       |             | NOT NULL    |                   | user_information(user_id) |
+| title       | VARCHAR(255) |             | NOT NULL    |                   |                           |
+| content     | TEXT         |             | NOT NULL    |                   |                           |
+| created_at  | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
+
+```sql
+CREATE TABLE public.community_posts (
+	post_id serial NOT NULL,
+	user_id bigint NOT NULL,
+	title varchar NOT NULL,
+	body text NOT NULL,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	CONSTRAINT community_posts_pk PRIMARY KEY (post_id),
+	CONSTRAINT community_posts_user_information_fk FOREIGN KEY (user_id) REFERENCES public.user_information(user_id)
+);
+CREATE INDEX community_posts_created_at_idx ON public.community_posts (created_at DESC);
+```
