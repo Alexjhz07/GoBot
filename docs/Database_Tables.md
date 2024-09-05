@@ -154,7 +154,27 @@ This will allow us to retrieve balances and aggregate info without needed to cal
 
 ## stock_transactions
 
-TODO
+| Column name        | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES                |
+| ------------------ | ------------ | ----------- | ----------- | ----------------- | ------------------------- |
+| transaction_id     | SERIAL       | PRIMARY KEY |             |                   |                           |
+| ticker_symbol      | VARCHAR(255) |             | NOT NULL    |                   |                           |
+| transaction_amount | BIGINT       |             | NOT NULL    |                   |                           |
+| transaction_stocks | BIGINT       |             | NOT NULL    |                   |                           |
+| user_id            | BIGINT       |             | NOT NULL    |                   | user_information(user_id) |
+| created_at         | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
+
+```sql
+CREATE TABLE public.stock_transactions (
+	transaction_id serial NOT NULL,
+	ticker_symbol varchar NOT NULL,
+	transaction_amount bigint NOT NULL,
+	transaction_stocks bigint NOT NULL,
+	user_id bigint NOT NULL,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	CONSTRAINT stock_transactions_pk PRIMARY KEY (transaction_id),
+	CONSTRAINT stock_transactions_user_information_fk FOREIGN KEY (user_id) REFERENCES public.user_information(user_id)
+);
+```
 
 ## wordle_history [Small]
 
