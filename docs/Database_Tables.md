@@ -73,19 +73,21 @@ Thus, we do not require a separate column to store salts.
 | ----------- | ------------ | ----------- | ----------- | ----------------- | ---------- |
 | id          | SERIAL       | PRIMARY KEY |             |                   |            |
 | email       | VARCHAR(255) |             | NOT NULL    |                   |            |
+| status      | VARCHAR(255) |             | NOT NULL    |                   |            |
 | created_at  | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |            |
 
 ```sql
 CREATE TABLE public.authentication_history (
 	id SERIAL NOT NULL,
 	email varchar NOT NULL,
+	status varchar NOT NULL,
 	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	CONSTRAINT authentication_history_pk PRIMARY KEY (id)
 );
 ```
 
-Note that we use bcrypt to hash the passwords, for which a salt is included in the output.  
-Thus, we do not require a separate column to store salts.
+Keeps track of login attempts.  
+Use this table to stop repeated logins with the wrong credentials.
 
 ## user_experience [Small]
 
