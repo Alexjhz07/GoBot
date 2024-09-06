@@ -67,6 +67,26 @@ CREATE TABLE public.user_authentication (
 Note that we use bcrypt to hash the passwords, for which a salt is included in the output.  
 Thus, we do not require a separate column to store salts.
 
+## authentication_history [Small]
+
+| Column name | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES |
+| ----------- | ------------ | ----------- | ----------- | ----------------- | ---------- |
+| id          | SERIAL       | PRIMARY KEY |             |                   |            |
+| email       | VARCHAR(255) |             | NOT NULL    |                   |            |
+| created_at  | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |            |
+
+```sql
+CREATE TABLE public.authentication_history (
+	id SERIAL NOT NULL,
+	email varchar NOT NULL,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	CONSTRAINT authentication_history_pk PRIMARY KEY (id)
+);
+```
+
+Note that we use bcrypt to hash the passwords, for which a salt is included in the output.  
+Thus, we do not require a separate column to store salts.
+
 ## user_experience [Small]
 
 | Column name | Type   | Properties  | CONSTRAINTS | DEFAULT | REFERENCES                |
