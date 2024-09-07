@@ -1,15 +1,15 @@
 from discord.ext.commands import Cog, command
-import requests
+import aiohttp
 
 class Bank(Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.route = bot.routes['banking']
 
     @command(brief='Shows the balance of the user', aliases=['bal', 'b'])
     async def balance(self, ctx):
-        r = requests.post(f'{self.route}/', {'queries': ['']})
-        await ctx.send('Balance')
+        # r = await aiohttp (f'{self.route}/', {'queries': ['']})
+        # await ctx.send('Balance')
+        print("hi")
 
 async def setup(bot):
     await bot.add_cog(Bank(bot))
