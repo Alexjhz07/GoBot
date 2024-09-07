@@ -1,5 +1,4 @@
 from discord.ext.commands import Cog, command
-import aiohttp
 
 class Bank(Cog):
     def __init__(self, bot):

@@ -18,10 +18,11 @@ class RequestHandler():
         try:
             async with aiohttp.ClientSession(headers={"Content-Type": "application/json"}) as session:
                 async with session.post(f'{self.routes[service]}/{route}', data=json.dumps(payload)) as r:
+                    content = json.loads((await r.read()).decode('utf8') or '{}')
+                    content['return_code'] = r.status
                     if r.status == 200:
-                        return json.loads((await r.read()).decode('utf8'))
+                        return content
                     else:
-                        print(json.loads((await r.read()).decode('utf8')))
                         return None
         except Exception as e:
             print(f"[Error] (Request) {service} @ {route}: {e}", flush=True)
@@ -32,8 +33,7 @@ class RequestHandler():
         if res == None: return False
         if (res['responses'][0][0]['count'] == '0'):
             user_created = await self.post('db', 'exec', {'queries': ['INSERT INTO user_information (user_id, username, nickname, avatar_url) VALUES ($1, $2, $3, $4)'], 'arguments': [[user.id, user.name, user.nick, str(user.avatar)]]})
-            if user_created == None: return False
-            return True
+            return user_created['return_code'] == 200
         else:
             return True
         
