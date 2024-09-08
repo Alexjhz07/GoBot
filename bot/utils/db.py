@@ -13,7 +13,6 @@ async def post(service: str, route: str, payload: dict):
         async with ClientSession(headers={"Content-Type": "application/json"}) as session:
             async with session.post(f'{ROUTES[service]}/{route}', data=dumps(payload)) as r:
                 content = loads((await r.read()).decode('utf8') or '{}')
-                content['return_code'] = r.status
                 if r.status == 200:
                     return content
                 else:

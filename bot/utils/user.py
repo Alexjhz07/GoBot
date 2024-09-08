@@ -6,6 +6,4 @@ async def assert_user_exists(user: Member):
     if res == None: return False
     if (res['responses'][0][0]['count'] == '0'):
         user_created = await post('db', 'exec', {'queries': ['INSERT INTO user_information (user_id, username, nickname, avatar_url) VALUES ($1, $2, $3, $4)'], 'arguments': [[user.id, user.name, user.nick, str(user.avatar)]]})
-        return user_created['return_code'] == 200
-    else:
-        return True
+    return True
