@@ -1,4 +1,4 @@
-from discord.ext.commands import Cog, Context, Bot
+from discord.ext.commands import Cog, Context, Bot, BucketType
 from discord.ext import commands
 
 from os import getenv, listdir
@@ -15,6 +15,7 @@ class Admin(Cog):
         return True
 
     @commands.command(brief='Reload all cogs', aliases=['restart', 'rel'])
+    @commands.cooldown(1, 1, BucketType.user)
     async def reload(self, ctx: Context):
         if (not await self.is_admin(ctx)): return
         
@@ -28,6 +29,7 @@ class Admin(Cog):
         await ctx.send(f'Cogs Reloaded: [{", ".join(cogs)}]')
 
     @commands.command(brief='Shutdown system gracefully')
+    @commands.cooldown(1, 1, BucketType.user)
     async def shutdown(self, ctx: Context):
         if (not await self.is_admin(ctx)): return
         
