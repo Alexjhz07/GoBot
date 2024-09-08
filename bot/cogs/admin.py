@@ -10,7 +10,7 @@ class Admin(Cog):
 
     async def is_admin(self, ctx: Context):
         if (ctx.author.id != OWNER):
-            await ctx.send('Insufficient Permissions')
+            await ctx.reply('Insufficient Permissions')
             return False
         return True
 
@@ -26,14 +26,14 @@ class Admin(Cog):
                 await self.bot.reload_extension(f'cogs.{filename[:-3]}')
                 print(f'Loaded {filename}')
         
-        await ctx.send(f'Cogs Reloaded: [{", ".join(cogs)}]')
+        await ctx.reply(f'Cogs Reloaded: [{", ".join(cogs)}]')
 
     @commands.command(brief='Shutdown system gracefully')
     @commands.cooldown(1, 1, BucketType.user)
     async def shutdown(self, ctx: Context):
         if (not await self.is_admin(ctx)): return
         
-        await ctx.send("Going to sleep")
+        await ctx.reply("Going to sleep")
         await self.bot.close()
 
 async def setup(bot):

@@ -1,3 +1,4 @@
+from lib.exceptions import PostException
 from aiohttp import ClientSession
 from json import dumps, loads
 
@@ -16,7 +17,6 @@ async def post(service: str, route: str, payload: dict):
                 if r.status == 200:
                     return content
                 else:
-                    return None
+                    raise PostException(f'{service} @ {route}: Return code {r.status}')
     except Exception as e:
-        print(f"[Error] (Request) {service} @ {route}: {e}", flush=True)
-        return None
+        raise PostException(f'{service} @ {route}: {e}')

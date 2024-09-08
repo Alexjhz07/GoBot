@@ -2,6 +2,7 @@ from os import listdir
 from discord import Message
 from discord.ext.commands import Bot, MinimalHelpCommand, Context
 from discord.ext.commands.errors import CommandError, CommandNotFound, CommandOnCooldown, MissingRequiredArgument
+from lib.exceptions import PostException
 from utils.user import assert_user_exists
 
 class GBot(Bot):
@@ -12,9 +13,13 @@ class GBot(Bot):
     async def on_message(self, message: Message):
         if message.author.bot: return
         
-        if (not await assert_user_exists(message.author)):
-            return await message.channel.send("[Error] (Bot) Error during user validation")
-        await super().on_message(message)
+        try:
+            await assert_user_exists(message.author)
+            await super().on_message(message)
+        except PostException as e:
+            await message.reply(f'Server-side Exception: {e}')
+        except Exception as e:
+            await message.reply(f'Exception: {e}')
 
     async def load_cogs(self):
         for filename in listdir('./cogs'):
@@ -29,6 +34,10 @@ class GBot(Bot):
             await ctx.reply(f'Command Cooldown: {exception}')
         elif isinstance(exception, MissingRequiredArgument):
             await ctx.reply(f'Missing Arguments: {exception}')
+        elif isinstance(exception, PostException):
+            await ctx.reply(f'Server-side Exception: {exception}')
+        else:
+            await ctx.reply(f'Exception: {exception}')
 
     async def start(self, TOKEN):
         await self.load_cogs()
