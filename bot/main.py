@@ -2,7 +2,7 @@ from os import getenv
 from asyncio import run
 from discord import Intents
 from dotenv import load_dotenv
-from bo import GBot
+from bot import GBot
 
 # LOAD ========================================================================
 
