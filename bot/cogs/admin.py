@@ -1,8 +1,8 @@
 from discord.ext.commands import Cog, Context, Bot
 from discord.ext import commands
 
-import os
-OWNER = int(os.getenv('BOT_OWNER'))
+from os import getenv, listdir
+OWNER = int(getenv('BOT_OWNER'))
 
 class Admin(Cog):
     def __init__(self, bot):
@@ -19,7 +19,7 @@ class Admin(Cog):
         if (not await self.is_admin(ctx)): return
         
         cogs = []
-        for filename in os.listdir('./cogs'):
+        for filename in listdir('./cogs'):
             if filename.endswith('.py'):
                 cogs.append(filename[:-3])
                 await self.bot.reload_extension(f'cogs.{filename[:-3]}')
@@ -29,6 +29,8 @@ class Admin(Cog):
 
     @commands.command(brief='Shutdown system gracefully')
     async def shutdown(self, ctx: Context):
+        if (not await self.is_admin(ctx)): return
+        
         await ctx.send("Going to sleep")
         await self.bot.close()
 

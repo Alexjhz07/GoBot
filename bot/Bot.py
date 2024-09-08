@@ -1,10 +1,9 @@
-import os
+from os import listdir
 from discord import Message, User, Member
 from discord.ext.commands import Bot, MinimalHelpCommand
 
-import aiohttp
-import json
-
+from aiohttp import ClientSession
+from json import dumps, loads
 class RequestHandler():
     def __init__(self):
         self.routes = {
@@ -16,9 +15,9 @@ class RequestHandler():
 
     async def post(self, service: str, route: str, payload: dict):
         try:
-            async with aiohttp.ClientSession(headers={"Content-Type": "application/json"}) as session:
-                async with session.post(f'{self.routes[service]}/{route}', data=json.dumps(payload)) as r:
-                    content = json.loads((await r.read()).decode('utf8') or '{}')
+            async with ClientSession(headers={"Content-Type": "application/json"}) as session:
+                async with session.post(f'{self.routes[service]}/{route}', data=dumps(payload)) as r:
+                    content = loads((await r.read()).decode('utf8') or '{}')
                     content['return_code'] = r.status
                     if r.status == 200:
                         return content
@@ -51,7 +50,7 @@ class GBot(Bot):
         await super().on_message(message)
 
     async def load_cogs(self):
-        for filename in os.listdir('./cogs'):
+        for filename in listdir('./cogs'):
             if filename.endswith('.py'):
                 await self.load_extension(f'cogs.{filename[:-3]}')
                 print(f'Loaded {filename}')
