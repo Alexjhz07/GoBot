@@ -163,6 +163,8 @@ CREATE TABLE public.bank_transactions (
   - `daily`: Daily money collection
   - `weekly`: Weekly money collection
   - `monthly`: Monthly money collection
+  - `stonks`: Frequent money collection
+  - `jackpot`: Frequent money collection, with some additional luck
   - `transfer`: Money transferred in from or out to another user
   - `flip`: Money won or lost from a coin flip
   - `wordle`: Money won from winning a wordle game
