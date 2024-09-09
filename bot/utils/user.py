@@ -8,7 +8,18 @@ async def check_user_exists(user_id: int):
 async def assert_user_exists(user: Member):
     user_exists = await check_user_exists(user.id)
     if (not user_exists):
-        await post('db', 'exec', {'queries': ['INSERT INTO user_information (user_id, username, nickname, avatar_url) VALUES ($1, $2, $3, $4)'], 'arguments': [[user.id, user.name, user.nick, str(user.avatar)]]})
+        await post('db', 'exec', {
+            'queries': [
+                'INSERT INTO user_information (user_id, username, nickname, avatar_url) VALUES ($1, $2, $3, $4)',
+                'INSERT INTO user_experience (user_id) VALUES ($1)',
+                'INSERT INTO bank_timer (user_id) VALUES ($1)'
+            ], 
+            'arguments': [
+                [user.id, user.name, user.nick, str(user.avatar)],
+                [user.id],
+                [user.id]
+            ]
+        })
 
 def user_mention_to_id(user_mention: str):
     try:
