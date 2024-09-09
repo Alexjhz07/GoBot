@@ -16,7 +16,7 @@ class Bank(Cog):
         bal = await fetch_balance(ctx.author.id)
         await ctx.reply(f'Current Balance: {bal}')
 
-    @commands.command(brief='Shows the balance of the user', aliases=['give', 'feed'])
+    @commands.command(brief='Shows the balance of the user', aliases=['give', 'feed'], ignore_extra=False)
     @commands.cooldown(1, 5, BucketType.user)
     async def donate(self, ctx: Context, amount: str, target: str):
         target_id = user_mention_to_id(target)

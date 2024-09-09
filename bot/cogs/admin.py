@@ -14,7 +14,7 @@ class Admin(Cog):
             return False
         return True
 
-    @commands.command(brief='Reload all cogs', aliases=['restart', 'rel'])
+    @commands.command(brief='Reload all cogs', aliases=['restart', 'rel'], hidden=True)
     @commands.cooldown(1, 1, BucketType.user)
     async def reload(self, ctx: Context):
         if (not await self.is_admin(ctx)): return
@@ -28,7 +28,7 @@ class Admin(Cog):
         
         await ctx.reply(f'Cogs Reloaded: [{", ".join(cogs)}]')
 
-    @commands.command(brief='Shutdown system gracefully')
+    @commands.command(brief='Shutdown system gracefully', hidden=True)
     @commands.cooldown(1, 1, BucketType.user)
     async def shutdown(self, ctx: Context):
         if (not await self.is_admin(ctx)): return

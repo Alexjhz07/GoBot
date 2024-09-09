@@ -1,6 +1,6 @@
 from os import listdir
 from discord import Message
-from discord.ext.commands import Bot, MinimalHelpCommand, Context
+from discord.ext.commands import Bot, DefaultHelpCommand, Context
 from discord.ext.commands.errors import CommandError, CommandNotFound, CommandOnCooldown, MissingRequiredArgument
 from lib.exceptions import PostException
 from utils.user import assert_user_exists
@@ -8,7 +8,7 @@ from utils.user import assert_user_exists
 class GBot(Bot):
     def __init__(self, command_prefix, intents):
         self.locked_users = {}
-        super(GBot, self).__init__(command_prefix=command_prefix, intents=intents, help_command=MinimalHelpCommand(no_category='Commands'))
+        super(GBot, self).__init__(command_prefix=command_prefix, intents=intents, help_command=DefaultHelpCommand())
 
     async def on_message(self, message: Message):
         if message.author.bot: return
