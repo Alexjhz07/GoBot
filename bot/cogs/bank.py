@@ -1,8 +1,9 @@
 from bot import GBot
 from lib.exceptions import BankTimerException
+from random import randint
 from discord.ext.commands import Cog, Context, BucketType
 from discord.ext import commands
-from utils.bank import fetch_balance, transfer_funds, collect_timely_funds
+from utils.bank import fetch_balance, add_funds, transfer_funds, collect_timely_funds
 from utils.user import user_mention_to_id, check_user_exists
 
 class Bank(Cog):
@@ -36,6 +37,30 @@ class Bank(Cog):
 
         await transfer_funds(ctx.author.id, amount, target_id)
         await ctx.reply(f'Successfully transferred {amount}')
+
+    @commands.command(brief='Variable but frequent income', aliases=['s'])
+    @commands.cooldown(1, 180, BucketType.user)
+    async def stonks(self, ctx: Context):
+        user_id = ctx.author.id
+        peanuts = randint(1, 50)
+        jackpot = randint(1, 100)
+
+        if jackpot == 42:
+            await add_funds(user_id, 300, 'jackpot')
+            bal = await fetch_balance(user_id)
+            await ctx.send(f'***JACKPOT!***\n${ctx.author.nick} just won the stonks jackpot!\n*300* peanuts were added to their balance!\nThey now have {bal} peanuts in their account')
+        
+        await add_funds(user_id, peanuts, 'stonks')
+        bal = await fetch_balance(user_id)
+
+        if peanuts == 1:
+            await ctx.send(f"The stonks are not very high today...\n{ctx.author.nick} just received {peanuts} peanut from the heavens.\nTheir pocket is now at {bal} peanuts.")
+        elif peanuts < 15:
+            await ctx.send(f"{ctx.author.nick} just had {peanuts} more peanuts added to their pockets.\nTheir balance is now {bal} peanuts.")
+        elif peanuts < 35:
+            await ctx.send(f"A great day for stonks!\n{ctx.author.nick} just received {peanuts} peanuts.\nTheir balance is now {bal} peanuts.")
+        else:
+            await ctx.send(f"Big stonks!\n{ctx.author.nick} just received {peanuts} peanuts.\nTheir balance is now {bal} peanuts.")
 
     @commands.command(brief='Daily income')
     @commands.cooldown(1, 30, BucketType.user)
