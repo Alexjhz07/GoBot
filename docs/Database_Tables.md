@@ -40,8 +40,8 @@ CREATE TABLE public.user_information (
 );
 ```
 
-For the current time being, this table will always contain the `default user` with `user_id` `-1` as a placeholder.  
-This is useful for someone outside of "the group" to browse the site with limited access or for a new user to browse.  
+For the current time being, this table will always contain the `default user` with `user_id` `-1` as a placeholder.
+This is useful for someone outside of "the group" to browse the site with limited access or for a new user to browse.
 
 ```sql
 INSERT INTO user_information (user_id, username) VALUES (-1, 'Default User')
@@ -64,7 +64,7 @@ CREATE TABLE public.user_authentication (
 );
 ```
 
-Note that we use bcrypt to hash the passwords, for which a salt is included in the output.  
+Note that we use bcrypt to hash the passwords, for which a salt is included in the output.
 Thus, we do not require a separate column to store salts.
 
 ## authentication_history [Small]
@@ -86,7 +86,7 @@ CREATE TABLE public.authentication_history (
 );
 ```
 
-Keeps track of login attempts.  
+Keeps track of login attempts.
 Use this table to stop repeated logins with the wrong credentials.
 
 ## user_experience [Small]
@@ -109,19 +109,19 @@ The cooldown can be reset on launch and stored in memory as it's fairly inconseq
 
 ## bank_timer [Small]
 
-| Column name  | Type        | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES                |
-| ------------ | ----------- | ----------- | ----------- | ----------------- | ------------------------- |
-| user_id      | BIGINT      | PRIMARY KEY |             |                   | user_information(user_id) |
-| bank_daily   | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
-| bank_weekly  | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
-| bank_monthly | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
+| Column name | Type        | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES                |
+| ----------- | ----------- | ----------- | ----------- | ----------------- | ------------------------- |
+| user_id     | BIGINT      | PRIMARY KEY |             |                   | user_information(user_id) |
+| daily       | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
+| weekly      | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
+| monthly     | TIMESTAMPTZ |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
 
 ```sql
 CREATE TABLE public.bank_timer (
 	user_id bigint NOT NULL,
-	bank_daily timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	bank_weekly timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	bank_monthly timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	daily timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	weekly timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	monthly timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	CONSTRAINT user_timer_pk PRIMARY KEY (user_id),
 	CONSTRAINT user_timer_user_information_fk FOREIGN KEY (user_id) REFERENCES public.user_information(user_id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
