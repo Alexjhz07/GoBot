@@ -1,5 +1,4 @@
-from random import random
-from math import floor
+from random import randint
 from time import time
 from discord import Message
 from discord.ext.commands import Cog
@@ -14,8 +13,8 @@ class Experience(Cog):
         if message.author.bot: return
         if self.timers.get(message.author.id, 0) > time(): return
 
-        exp = floor(random() * 50) + 1 # [1, 50]
-        next_time = time() + floor(random() * 180) + 120
+        exp = randint(1, 50)
+        next_time = time() + randint(0, 180) + 120
         
         await add_experience(message.author.id, exp)
         self.timers[message.author.id] = next_time
