@@ -1,7 +1,7 @@
 from os import listdir
 from discord import Message
 from discord.ext.commands import Bot, DefaultHelpCommand, Context
-from discord.ext.commands.errors import CommandError, CommandNotFound, CommandOnCooldown, MissingRequiredArgument
+from discord.ext.commands.errors import CommandError, CommandNotFound, CommandOnCooldown, MissingRequiredArgument, CommandInvokeError
 from lib.exceptions import PostException
 from utils.user import assert_user_exists
 
@@ -27,7 +27,7 @@ class GBot(Bot):
                 await self.load_extension(f'cogs.{filename[:-3]}')
                 print(f'Loaded {filename}')
      
-    async def on_command_error(self, ctx: Context, exception: CommandError):
+    async def on_command_error(self, ctx: Context, exception: Exception):
         if isinstance(exception, CommandNotFound):
             await ctx.reply(f'Unknown Command: {exception}')
         elif isinstance(exception, CommandOnCooldown):
@@ -36,6 +36,8 @@ class GBot(Bot):
             await ctx.reply(f'Missing Arguments: {exception}')
         elif isinstance(exception, PostException):
             await ctx.reply(f'Server-side Exception: {exception}')
+        elif isinstance(exception, CommandInvokeError):
+            await ctx.reply(f'{exception.original}')
         else:
             await ctx.reply(f'Exception: {exception}')
 

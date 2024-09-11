@@ -4,6 +4,7 @@ from discord.ext.commands import Cog, Context, BucketType
 from discord.ext import commands
 from utils.bank import fetch_balance, add_funds, transfer_funds, collect_timely_funds
 from utils.user import user_mention_to_id, check_user_exists
+from utils.caster import number_g
 
 class Bank(Cog):
     @commands.command(brief='Shows the balance of the user', aliases=['bal', 'b'])
@@ -19,12 +20,7 @@ class Bank(Cog):
         if target_id == ctx.author.id: return await ctx.reply("Error: Cannot send funds to yourself")
         if target_id == 0: return await ctx.reply("Error: This is an invalid target id")
 
-        try:
-            amount = int(amount)
-        except Exception as e:
-            return await ctx.reply('Error: Amount is invalid')
-        
-        if amount <= 0: return await ctx.reply('Error: Amount must be greater than 0')
+        amount = number_g(amount)
         
         bal = await fetch_balance(ctx.author.id)
         if bal < amount: return await ctx.reply(f'Error: Insufficient balance ({bal})')
