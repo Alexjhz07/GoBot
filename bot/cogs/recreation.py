@@ -1,13 +1,9 @@
-from bot import GBot
 from random import randint
 from discord.ext.commands import Cog, Context, BucketType
 from discord.ext import commands
 from utils.bank import fetch_balance, add_funds
 
 class Recreation(Cog):
-    def __init__(self, bot: GBot):
-        self.bot = bot
-
     @commands.command(brief='Flip a coin for double the peanuts or nothing!', aliases=['flip'], ignore_extra=False)
     @commands.cooldown(1, 1, BucketType.user)
     async def bet(self, ctx: Context, amount: str, prediction: str):
@@ -36,4 +32,4 @@ class Recreation(Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(Recreation(bot))
+    await bot.add_cog(Recreation())
