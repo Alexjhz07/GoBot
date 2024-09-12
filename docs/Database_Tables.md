@@ -63,7 +63,7 @@ CREATE TABLE public.user_authentication (
 Note that we use bcrypt to hash the passwords, for which a salt is included in the output.  
 Thus, we do not require a separate column to store salts.
 
-## authentication_history [Small]
+## authentication_history
 
 | Column name | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES |
 | ----------- | ------------ | ----------- | ----------- | ----------------- | ---------- |
@@ -197,16 +197,6 @@ CREATE TABLE public.stock_transactions (
 );
 ```
 
-## wordle_history [Small]
-
-| Column name | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES |
-| ----------- | ------------ | ----------- | ----------- | ----------------- | ---------- |
-| seed        | VARCHAR(255) | PRIMARY KEY |             |                   |            |
-| word        | VARCHAR(255) |             | NOT NULL    |                   |            |
-| created_at  | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |            |
-
-TODO
-
 ## wordle_games
 
 | Column name | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES                |
@@ -218,7 +208,21 @@ TODO
 | win_flag    | BOOLEAN      |             | NOT NULL    | FALSE             |                           |
 | created_at  | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
 
-TODO
+```sql
+CREATE TABLE public.wordle_games (
+	guess_id serial NOT NULL,
+	user_id bigint NOT NULL,
+	guess_word varchar NOT NULL,
+	seed varchar NOT NULL,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	win_flag bool DEFAULT false NOT NULL,
+	CONSTRAINT wordle_games_pk PRIMARY KEY (guess_id),
+	CONSTRAINT wordle_games_user_information_fk FOREIGN KEY (user_id) REFERENCES public.user_information(user_id)
+);
+```
+
+The games will be unique per player, based on the seed (date string) combined and the player id  
+This means that we do not need to store the words ona given day, as it can be computed at any time
 
 ## community_posts
 
