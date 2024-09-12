@@ -11,7 +11,7 @@ class Bank(Cog):
     @commands.cooldown(1, 1, BucketType.user)
     async def balance(self, ctx: Context):
         bal = await fetch_balance(ctx.author.id)
-        await ctx.reply(f'Current Balance: {bal}')
+        await ctx.reply(f'Current Balance: {bal} peanuts')
 
     @commands.command(brief='Shows the balance of the user', aliases=['give', 'feed'], ignore_extra=False)
     @commands.cooldown(1, 5, BucketType.user)
@@ -28,19 +28,19 @@ class Bank(Cog):
         if not await check_user_exists(target_id): return await ctx.reply(f'Error: User with id {target_id} does not exist')
 
         await transfer_funds(ctx.author.id, amount, target_id)
-        await ctx.reply(f'Successfully transferred {amount}')
+        await ctx.reply(f'Successfully transferred {amount} peanuts')
 
     @commands.command(brief='Variable but frequent income', aliases=['s'])
     @commands.cooldown(1, 180, BucketType.user)
     async def stonks(self, ctx: Context):
         user_id = ctx.author.id
-        peanuts = randint(1, 50)
+        peanuts = randint(100, 5000)
         jackpot = randint(1, 100)
 
         if jackpot == 42:
-            await add_funds(user_id, 300, 'jackpot')
+            await add_funds(user_id, 30000, 'jackpot')
             bal = await fetch_balance(user_id)
-            await ctx.reply(f'***JACKPOT!***\n${ctx.author.nick} just won the stonks jackpot!\n*300* peanuts were added to their balance!\nThey now have {bal} peanuts in their account')
+            await ctx.reply(f'***JACKPOT!***\n${ctx.author.nick} just won the stonks jackpot!\n*30000* peanuts were added to their balance!\nThey now have {bal} peanuts in their account')
         
         await add_funds(user_id, peanuts, 'stonks')
         bal = await fetch_balance(user_id)

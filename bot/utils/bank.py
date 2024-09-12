@@ -43,7 +43,7 @@ async def collect_timely_funds(user_id: int, timer: str):
     timer_finished, next_date = await timer_status(user_id, timer)
     if not timer_finished: raise BankTimerException(f'Your next {timer} is on {datetime.fromisoformat(next_date)}')
 
-    REWARDS = {'daily': 60, 'weekly': 180, 'monthly': 800}
+    REWARDS = {'daily': 6000, 'weekly': 18000, 'monthly': 80000}
     INTERVALS = {'daily': '1 day', 'weekly': '1 week', 'monthly': '1 month'}
 
     await post('db', 'exec', {
