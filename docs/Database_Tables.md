@@ -168,6 +168,7 @@ CREATE TABLE public.bank_transactions (
   - `transfer`: Money transferred in from or out to another user
   - `flip`: Money won or lost from a coin flip
   - `wordle`: Money won from winning a wordle game
+  - `stock`: Money invested or returned from stocks
 
 The name `transaction` is only used in the sense of a bank transaction.
 Transactions as in grouped requests in the psql sense are denoted in the `group_uuid` column.
