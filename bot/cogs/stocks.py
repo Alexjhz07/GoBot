@@ -32,7 +32,7 @@ class Stock():
         return embed
 
 class Stocks(Cog):
-    # Unforunately, it seems like the default yf lib uses requests and is thus single threaded
+    # Unfortunately, it seems like the default yf lib uses requests and is thus single threaded
     # Perhaps in the future, I can research for a way to make this multithreaded
     @commands.command(brief='Quotes a stock. Argument: symbol', aliases=['q'], ignore_extra=False)
     @commands.cooldown(5, 1, BucketType.user)
