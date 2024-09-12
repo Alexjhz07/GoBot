@@ -11,3 +11,11 @@ async def stock_transaction(user_id: int, ticker_symbol: str, transaction_amount
                 ['stock', transaction_amount, user_id]
             ]
     })
+
+async def fetch_stocks(user_id: int, ticker_symbol: str):
+    res = await post('db', 'query', {'queries': ['SELECT SUM(transaction_stocks) FROM stock_transactions WHERE ticker_symbol=$1 AND user_id=$2'], 'arguments': [[ticker_symbol, user_id]]})
+    
+    raw = res['responses'][0][0]['sum']
+    if raw == '': raw = 0
+
+    return int(raw)
