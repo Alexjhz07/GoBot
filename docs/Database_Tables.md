@@ -1,16 +1,12 @@
 # Tables
 
-This document contains all the tables currently in use along with any extra information regarding the data stored.
-Tables that do not expect many rows, such as those that are per user or per day, are marked with [small] beside their title.
-
-`VARCHAR(255)` is used throughout as, from what I've read, it has negligible performance differences compared to lesser values.
-I do not want to deal with formating the whole database if Discord suddenly decides that usernames can be 200 characters long.
-
+This document contains all the tables currently in use along with any extra information regarding the data stored.  
+Tables that do not expect many rows, such as those that are per user or per day, are marked with [small] beside their title.  
 A commonly occurring key is the `user_id`. This key is always to be set to reference the foreign-key in `user_information`.
 
 # User Creation
 
-Certain tables must have an entry with certain fields set when a user is added to the system.
+Certain tables must have an entry with certain fields set when a user is added to the system.  
 Please refer to the [List of Tables](list-of-tables) for more info on the entire structure
 
 - `user_information` - `user_id`, `username` (This entry must be created first as it houses the `user_id` referenced by other tables)
@@ -40,7 +36,7 @@ CREATE TABLE public.user_information (
 );
 ```
 
-For the current time being, this table will always contain the `default user` with `user_id` `-1` as a placeholder.
+For the current time being, this table will always contain the `default user` with `user_id` `-1` as a placeholder.  
 This is useful for someone outside of "the group" to browse the site with limited access or for a new user to browse.
 
 ```sql
@@ -64,7 +60,7 @@ CREATE TABLE public.user_authentication (
 );
 ```
 
-Note that we use bcrypt to hash the passwords, for which a salt is included in the output.
+Note that we use bcrypt to hash the passwords, for which a salt is included in the output.  
 Thus, we do not require a separate column to store salts.
 
 ## authentication_history [Small]
@@ -127,7 +123,7 @@ CREATE TABLE public.bank_timer (
 );
 ```
 
-These are loaded once at the start of the bot and cached for quick use.
+These are loaded once at the start of the bot and cached for quick use.  
 Rewrites to bank timers are infrequent and must be persisted. That is why this table exists.
 
 ## bank_transactions
@@ -170,11 +166,11 @@ CREATE TABLE public.bank_transactions (
   - `wordle`: Money won from winning a wordle game
   - `stock`: Money invested or returned from stocks
 
-The name `transaction` is only used in the sense of a bank transaction.
+The name `transaction` is only used in the sense of a bank transaction.  
 Transactions as in grouped requests in the psql sense are denoted in the `group_uuid` column.
 
-Note that the bank transactions are currently used for everything money related to make things easy.
-In the future, it may be wise to have a separate table for summarized account info.
+Note that the bank transactions are currently used for everything money related to make things easy.  
+In the future, it may be wise to have a separate table for summarized account info.  
 This will allow us to retrieve balances and aggregate info without needed to calculate it each time.
 
 ## stock_transactions
