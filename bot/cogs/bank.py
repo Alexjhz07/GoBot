@@ -45,11 +45,11 @@ class Bank(Cog):
         await add_funds(user_id, peanuts, 'stonks')
         bal = await fetch_balance(user_id)
 
-        if peanuts == 1:
+        if peanuts == 100:
             await ctx.reply(f"The stonks are not very high today...\n{ctx.author.nick} just received {peanuts} peanut from the heavens.\nTheir pocket is now at {bal} peanuts.")
-        elif peanuts < 15:
+        elif peanuts < 1500:
             await ctx.reply(f"{ctx.author.nick} just had {peanuts} more peanuts added to their pockets.\nTheir balance is now {bal} peanuts.")
-        elif peanuts < 35:
+        elif peanuts < 3500:
             await ctx.reply(f"A great day for stonks!\n{ctx.author.nick} just received {peanuts} peanuts.\nTheir balance is now {bal} peanuts.")
         else:
             await ctx.reply(f"Big stonks!\n{ctx.author.nick} just received {peanuts} peanuts.\nTheir balance is now {bal} peanuts.")
