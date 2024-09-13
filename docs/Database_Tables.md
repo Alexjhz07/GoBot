@@ -128,14 +128,15 @@ Rewrites to bank timers are infrequent and must be persisted. That is why this t
 
 ## bank_transactions
 
-| Column name        | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES                |
-| ------------------ | ------------ | ----------- | ----------- | ----------------- | ------------------------- |
-| transaction_id     | SERIAL       | PRIMARY KEY |             |                   |                           |
-| transaction_type   | VARCHAR(255) |             | NOT NULL    |                   |                           |
-| transaction_amount | BIGINT       |             | NOT NULL    |                   |                           |
-| user_id            | BIGINT       |             | NOT NULL    |                   | user_information(user_id) |
-| created_at         | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
-| group_uuid         | UUID         |             | NOT NULL    |                   |                           |
+| Column name         | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES                |
+| ------------------- | ------------ | ----------- | ----------- | ----------------- | ------------------------- |
+| transaction_id      | SERIAL       | PRIMARY KEY |             |                   |                           |
+| transaction_type    | VARCHAR(255) |             | NOT NULL    |                   |                           |
+| transaction_message | VARCHAR(255) |             | NOT NULL    | ''                |                           |
+| transaction_amount  | BIGINT       |             | NOT NULL    |                   |                           |
+| user_id             | BIGINT       |             | NOT NULL    |                   | user_information(user_id) |
+| created_at          | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
+| group_uuid          | UUID         |             | NOT NULL    |                   |                           |
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -145,6 +146,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE public.bank_transactions (
 	transaction_id serial NOT NULL,
 	transaction_type varchar NOT NULL,
+	transaction_message varchar DEFAULT '' NOT NULL,
 	transaction_amount bigint NOT NULL,
 	user_id bigint NOT NULL,
 	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,

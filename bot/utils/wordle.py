@@ -18,7 +18,6 @@ class WordleView(View):
         for i in range(len(letters)):
             self.add_item(Button(label=letters[i], style=COLOUR_MAP[results[i]], disabled=True))
 
-
 async def get_wordle_response(user_id: int, guess: str) -> list:
     response = await post('wordle', 'game', { "user_id": user_id, "guess": guess })
     if response['status'] == 'miss':
@@ -37,7 +36,7 @@ async def get_wordle_response(user_id: int, guess: str) -> list:
 def generate_win(resp: any):
     embed = Embed(
         title="Winner Winner Chicken Dinner", 
-        description=f"You have completed the daily wordle in {resp['guess_count']} guesses and gained {resp['reward']} peanuts :tada:\nThanks for playing today, come back tomorrow for another puzzle!", 
+        description=f"You completed the daily wordle in {resp['guess_count']} guesses and gained {resp['reward']} peanuts :tada:\nThanks for playing today, come back tomorrow for another puzzle!", 
         color=0xffd500
     )
     view = WordleView(resp)
@@ -47,7 +46,7 @@ def generate_win(resp: any):
 def generate_already_won(resp: any):
     embed = Embed(
         title="Already Won", 
-        description=f"You already completed the daily wordle in {resp['guess_count']} guesses and gained {resp['reward']} peanuts :tada:\nThanks for playing today, come back tomorrow for another puzzle!", 
+        description=f"You completed the daily wordle in {resp['guess_count']} guesses and gained {resp['reward']} peanuts :tada:\nThanks for playing today, come back tomorrow for another puzzle!\nToday's word for you was ||`{resp['answer']}`", 
         color=0xffd500
     )
     
@@ -65,7 +64,7 @@ def generate_miss(resp: any):
 
     embed = Embed(
         title=titles[resp['matching'] + resp['misplaced']], 
-        description=f"Nice try, but no cigar.\nThis You have {6 - resp['guess_count']} guesses remaining\n\nGrey = This letter is not in the word\nBlue = This letter is in the word but is currently in the wrong spot\nGreen = This letter is in the word and in the right spot", 
+        description=f"Nice try, but no cigar.\nThis You have {6 - resp['guess_count']} guesses remaining\n\nGrey = This letter is not in the word\nBlue = This letter is in the word but is in the wrong spot\nGreen = This letter is in the word and is in the right spot", 
         color=0x5539cc
     )
     embed.set_footer(text='Rewards are higher for winning with fewer guesses:\n400k, 200k, 100k, 50k, 25k, 12.5k')
