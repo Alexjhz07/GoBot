@@ -2,6 +2,7 @@ from random import randint
 from discord.ext.commands import Cog, Context, BucketType
 from discord.ext import commands
 from utils.bank import fetch_balance, add_funds
+from utils.wordle import get_wordle_response
 
 class Recreation(Cog):
     @commands.command(brief='Flip a coin for double the peanuts or nothing!', aliases=['flip'], ignore_extra=False)
@@ -29,6 +30,15 @@ class Recreation(Cog):
         else:
             await add_funds(ctx.author.id, -amount, 'flip')
             await ctx.reply(f'Bad luck... You bet `{prediction}` and the coin landed `{result}` up.\nYou just lost {amount} peanuts, your pockets now contain {bal - amount} peanuts.')
+
+    @commands.command(brief='A pleasant game of wordle', aliases=['guess', 'w'], ignore_extra=False)
+    @commands.cooldown(1, 1, BucketType.user)
+    async def wordle(self, ctx: Context, guess: str):
+        resp = await get_wordle_response(ctx.author.id, guess)
+        if len(resp) == 1:
+            await ctx.reply(embed=resp[0])
+        else:
+            await ctx.reply(embed=resp[0], view=resp[1])
 
 
 async def setup(bot):

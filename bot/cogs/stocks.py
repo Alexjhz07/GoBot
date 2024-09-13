@@ -29,6 +29,7 @@ class Stock():
         embed.add_field(name="50 day average (₱)", value=self.fiftyDayAverage, inline=True)
         embed.add_field(name="Industry", value=self.industry, inline=True)
         embed.add_field(name="Market Cap ($)", value=f"{self.marketCap:,}", inline=True)
+        embed.set_footer(text="\ufeff\nNote that 1 USD = 100 peanuts. All values except Market Cap are displayed in peanuts")
         return embed
 
 class Stocks(Cog):
