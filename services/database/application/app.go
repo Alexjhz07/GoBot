@@ -5,16 +5,11 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"os"
+	"strconv"
 	"time"
 
 	_ "github.com/lib/pq"
-)
-
-const (
-	host   = "localhost"
-	port   = 5434
-	user   = "postgres"
-	dbname = "postgres"
 )
 
 type DatabaseApp struct {
@@ -35,7 +30,20 @@ func New() (*DatabaseApp, error) {
 }
 
 func (a *DatabaseApp) loadDatabase() error {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"dbname=%s sslmode=disable", host, port, user, dbname)
+	port, err := strconv.Atoi(os.Getenv("DB_PORT"))
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(os.Getenv("DB_USER"))
+
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
+		os.Getenv("DB_HOST"),
+		port,
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_PASS"),
+	)
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {

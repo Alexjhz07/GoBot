@@ -6,12 +6,21 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		fmt.Println("Error loading .env file")
+		return
+	}
+
 	app, err := application.New()
 	if err != nil {
-		fmt.Println("failed to create application")
+		fmt.Println("failed to create application:", err)
 		return
 	}
 
