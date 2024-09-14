@@ -64,7 +64,7 @@ def generate_miss(resp: any):
 
     embed = Embed(
         title=titles[resp['matching'] + resp['misplaced']], 
-        description=f"Nice try, but no cigar :PePaimon:\nYou have {6 - resp['guess_count']} guesses remaining\n\nGrey = This letter is not in the word\nBlue = This letter is in the word but is in the wrong spot\nGreen = This letter is in the word and is in the right spot", 
+        description=f"Nice try, but no cigar\nYou have {6 - resp['guess_count']} guesses remaining\n\nGrey = This letter is not in the word\nBlue = This letter is in the word but is in the wrong spot\nGreen = This letter is in the word and is in the right spot", 
         color=0x5539cc
     )
     embed.set_footer(text='Rewards are higher for winning with fewer guesses:\n400k, 200k, 100k, 50k, 25k, 12.5k')
