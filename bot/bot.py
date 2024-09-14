@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, getenv
 from discord import Message
 from discord.ext.commands import Bot, DefaultHelpCommand, Context
 from discord.ext.commands.errors import CommandError, CommandNotFound, CommandOnCooldown, MissingRequiredArgument, CommandInvokeError
@@ -7,7 +7,6 @@ from utils.user import assert_user_exists
 
 class GBot(Bot):
     def __init__(self, command_prefix, intents):
-        self.locked_users = {}
         super(GBot, self).__init__(command_prefix=command_prefix, intents=intents, help_command=DefaultHelpCommand())
 
     async def on_message(self, message: Message):
@@ -15,10 +14,19 @@ class GBot(Bot):
         
         try:
             await assert_user_exists(message.author)
+
+            if message.channel.id != int(getenv('BOT_CHANNEL')): return # TEMP GUARD !!!
+                
             await super().on_message(message)
         except PostException as e:
+            if message.channel.id != int(getenv('BOT_CHANNEL')): # TEMP GUARD !!!
+                print(e)
+                return
             await message.reply(f'Server-side Exception: {e}')
         except Exception as e:
+            if message.channel.id != int(getenv('BOT_CHANNEL')): # TEMP GUARD !!!
+                print(e)
+                return
             await message.reply(f'Exception: {e}')
 
     async def load_cogs(self):
@@ -28,6 +36,10 @@ class GBot(Bot):
                 print(f'Loaded {filename}')
      
     async def on_command_error(self, ctx: Context, exception: Exception):
+        if ctx.channel.id != int(getenv('BOT_CHANNEL')): # TEMP GUARD !!!
+            print(exception)
+            return
+        
         if isinstance(exception, CommandNotFound):
             await ctx.reply(f'Unknown Command: {exception}')
         elif isinstance(exception, CommandOnCooldown):

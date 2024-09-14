@@ -13,9 +13,9 @@ async def assert_user_exists(user: Member):
                 'INSERT INTO user_information (user_id, username, nickname, avatar_url) VALUES ($1, $2, $3, $4)',
                 'INSERT INTO user_experience (user_id) VALUES ($1)',
                 'INSERT INTO bank_timer (user_id) VALUES ($1)'
-            ], 
+            ],
             'arguments': [
-                [user.id, user.name, user.nick, str(user.avatar)],
+                [user.id, user.name, user.nick if user.nick else '' , str(user.avatar) if user.avatar else ''],
                 [user.id],
                 [user.id]
             ]
