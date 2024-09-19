@@ -36,23 +36,25 @@ class Bank(Cog):
         user_id = ctx.author.id
         peanuts = randint(100, 5000)
         jackpot = randint(1, 100)
+        
+        author_name = ctx.author.nick or ctx.author.name
 
         if jackpot == 42:
             await add_funds(user_id, 30000, 'jackpot')
             bal = await fetch_balance(user_id)
-            await ctx.reply(f'***JACKPOT!***\n${ctx.author.nick} just won the stonks jackpot!\n*30000* peanuts were added to their balance!\nThey now have {bal} peanuts in their account')
+            await ctx.reply(f'***JACKPOT!***\n${author_name} just won the stonks jackpot!\n*30000* peanuts were added to their balance!\nThey now have {bal} peanuts in their account')
         
         await add_funds(user_id, peanuts, 'stonks')
         bal = await fetch_balance(user_id)
 
         if peanuts == 100:
-            await ctx.reply(f"The stonks are not very high today...\n{ctx.author.nick} just received {peanuts} peanut from the heavens.\nTheir pocket is now at {bal} peanuts.")
+            await ctx.reply(f"The stonks are not very high today...\n{author_name} just received {peanuts} peanut from the heavens.\nTheir pocket is now at {bal} peanuts.")
         elif peanuts < 1500:
-            await ctx.reply(f"{ctx.author.nick} just had {peanuts} more peanuts added to their pockets.\nTheir balance is now {bal} peanuts.")
+            await ctx.reply(f"{author_name} just had {peanuts} more peanuts added to their pockets.\nTheir balance is now {bal} peanuts.")
         elif peanuts < 3500:
-            await ctx.reply(f"A great day for stonks!\n{ctx.author.nick} just received {peanuts} peanuts.\nTheir balance is now {bal} peanuts.")
+            await ctx.reply(f"A great day for stonks!\n{author_name} just received {peanuts} peanuts.\nTheir balance is now {bal} peanuts.")
         else:
-            await ctx.reply(f"Big stonks!\n{ctx.author.nick} just received {peanuts} peanuts.\nTheir balance is now {bal} peanuts.")
+            await ctx.reply(f"Big stonks!\n{author_name} just received {peanuts} peanuts.\nTheir balance is now {bal} peanuts.")
 
     @commands.command(brief='Daily income')
     @commands.cooldown(1, 30, BucketType.user)

@@ -46,7 +46,7 @@ def generate_win(resp: any):
 def generate_already_won(resp: any):
     embed = Embed(
         title="Already Won", 
-        description=f"You completed the daily wordle in {resp['guess_count']} guesses and gained {resp['reward']} peanuts :tada:\nThanks for playing today, come back tomorrow for another puzzle!\nToday's word for you was ||`{resp['answer']}`", 
+        description=f"You completed the daily wordle in {resp['guess_count']} guesses and gained {resp['reward']} peanuts :tada:\nThanks for playing today, come back tomorrow for another puzzle!\nToday's word for you was ||`{resp['answer']}`||", 
         color=0xffd500
     )
     
