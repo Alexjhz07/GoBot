@@ -1,5 +1,6 @@
 from lib.exceptions import BankTimerException
 from utils.db import post
+from utils.caster import str_time_until
 from uuid import uuid4
 from datetime import datetime
 
@@ -41,7 +42,7 @@ async def timer_status(user_id: int, timer: str):
 
 async def collect_timely_funds(user_id: int, timer: str):
     timer_finished, next_date = await timer_status(user_id, timer)
-    if not timer_finished: raise BankTimerException(f'Your next {timer} is on {datetime.fromisoformat(next_date)}')
+    if not timer_finished: raise BankTimerException(f'Your next {timer} is in {str_time_until(next_date)}')
 
     REWARDS = {'daily': 6000, 'weekly': 18000, 'monthly': 80000}
     INTERVALS = {'daily': '1 day', 'weekly': '1 week', 'monthly': '1 month'}

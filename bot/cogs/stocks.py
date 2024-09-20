@@ -4,7 +4,7 @@ from discord.ext import commands
 from discord import Embed
 from utils.bank import fetch_balance
 from utils.stocks import stock_transaction, fetch_stocks
-from utils.caster import number_greater
+from utils.caster import str_number_greater
 from lib.exceptions import StockNotFoundException
 
 class Stock():
@@ -43,7 +43,7 @@ class Stocks(Cog):
     @commands.command(brief='Invest your peanuts! Arguments in order: amount, symbol', aliases=['invest'], ignore_extra=False)
     @commands.cooldown(1, 5, BucketType.user)
     async def buy(self, ctx: Context, amount: str, ticker_symbol: str):
-        amount = number_greater(amount)
+        amount = str_number_greater(amount)
         stock = Stock(ticker_symbol)
         bal = await fetch_balance(ctx.author.id)
         price = int(stock.price * amount * 100)
@@ -56,7 +56,7 @@ class Stocks(Cog):
     @commands.command(brief='Relish in your earnings! Arguments in order: amount, symbol', aliases=['liquidate'], ignore_extra=False)
     @commands.cooldown(1, 5, BucketType.user)
     async def sell(self, ctx: Context, amount: str, ticker_symbol: str):
-        amount = number_greater(amount)
+        amount = str_number_greater(amount)
         stock = Stock(ticker_symbol)
         bal = await fetch_balance(ctx.author.id)
         gains = int(stock.price * amount * 100)
