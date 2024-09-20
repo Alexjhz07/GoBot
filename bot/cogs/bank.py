@@ -11,7 +11,7 @@ class Bank(Cog):
     @commands.cooldown(1, 1, BucketType.user)
     async def balance(self, ctx: Context):
         bal = await fetch_balance(ctx.author.id)
-        await ctx.reply(f'Current Balance: {bal} peanuts')
+        await ctx.reply(f'Current Balance: {bal / 100} peanuts')
 
     @commands.command(brief='Shows the balance of the user', aliases=['give', 'feed'], ignore_extra=False)
     @commands.cooldown(1, 5, BucketType.user)
@@ -20,15 +20,15 @@ class Bank(Cog):
         if target_id == ctx.author.id: return await ctx.reply("Error: Cannot send funds to yourself")
         if target_id == 0: return await ctx.reply("Error: This is an invalid target id")
 
-        amount = str_number_greater(amount)
+        amount = str_number_greater(amount) * 100
         
         bal = await fetch_balance(ctx.author.id)
-        if bal < amount: return await ctx.reply(f'Error: Insufficient balance ({bal})')
+        if bal < amount: return await ctx.reply(f'Error: Insufficient balance ({bal / 100})')
 
         if not await check_user_exists(target_id): return await ctx.reply(f'Error: User with id {target_id} does not exist')
 
         await transfer_funds(ctx.author.id, amount, target_id)
-        await ctx.reply(f'Successfully transferred {amount} peanuts')
+        await ctx.reply(f'Successfully transferred {amount / 100} peanuts')
 
     @commands.command(brief='Variable but frequent income', aliases=['s'])
     @commands.cooldown(1, 180, BucketType.user)
