@@ -23,12 +23,12 @@ class Stock():
 
     def get_embed(self):
         embed=Embed(title=self.ticker_symbol, url=self.website, description=self.longName, color=0xffffff)
-        embed.add_field(name="Current Price (₱)", value=self.price, inline=True)
-        embed.add_field(name="Day Low (₱)", value=self.dayLow, inline=True)
-        embed.add_field(name="Day High (₱)", value=self.dayHigh, inline=True)
-        embed.add_field(name="50 day average (₱)", value=self.fiftyDayAverage, inline=True)
+        embed.add_field(name="Current Price", value=self.price, inline=True)
+        embed.add_field(name="Day Low", value=self.dayLow, inline=True)
+        embed.add_field(name="Day High", value=self.dayHigh, inline=True)
+        embed.add_field(name="50 day average", value=self.fiftyDayAverage, inline=True)
         embed.add_field(name="Industry", value=self.industry, inline=True)
-        embed.add_field(name="Market Cap ($)", value=f"{self.marketCap:,}", inline=True)
+        embed.add_field(name="Market Cap", value=f"{self.marketCap:,}", inline=True)
         return embed
 
 class Stocks(Cog):
