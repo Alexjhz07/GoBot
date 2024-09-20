@@ -4,7 +4,7 @@ from discord.ext import commands
 from discord import Embed
 from utils.bank import fetch_balance
 from utils.stocks import stock_transaction, fetch_stocks
-from utils.caster import number_g
+from utils.caster import number_greater
 from lib.exceptions import StockNotFoundException
 
 class Stock():
@@ -14,10 +14,10 @@ class Stock():
         if stock.get('ask') == None: raise StockNotFoundException(f'Stock with ticker symbol `{self.ticker_symbol}` not found')
         self.website = stock.get('website')
         self.longName = stock.get('longName')
-        self.price = int(stock.get('ask') * 100)
-        self.dayLow = int(stock.get('dayLow') * 100)
-        self.dayHigh = int(stock.get('dayHigh') * 100)
-        self.fiftyDayAverage = int(stock.get('fiftyDayAverage') * 100)
+        self.price = stock.get('ask')
+        self.dayLow = stock.get('dayLow')
+        self.dayHigh = stock.get('dayHigh')
+        self.fiftyDayAverage = stock.get('fiftyDayAverage')
         self.industry = stock.get('industry')
         self.marketCap = stock.get('marketCap')
 
@@ -29,7 +29,6 @@ class Stock():
         embed.add_field(name="50 day average (₱)", value=self.fiftyDayAverage, inline=True)
         embed.add_field(name="Industry", value=self.industry, inline=True)
         embed.add_field(name="Market Cap ($)", value=f"{self.marketCap:,}", inline=True)
-        embed.set_footer(text="\ufeff\nNote that 1 USD = 100 peanuts. All values except Market Cap are displayed in peanuts")
         return embed
 
 class Stocks(Cog):
@@ -44,29 +43,29 @@ class Stocks(Cog):
     @commands.command(brief='Invest your peanuts! Arguments in order: amount, symbol', aliases=['invest'], ignore_extra=False)
     @commands.cooldown(1, 5, BucketType.user)
     async def buy(self, ctx: Context, amount: str, ticker_symbol: str):
-        amount = number_g(amount)
+        amount = number_greater(amount)
         stock = Stock(ticker_symbol)
         bal = await fetch_balance(ctx.author.id)
-        price = (stock.price * amount)
+        price = int(stock.price * amount * 100)
 
-        if bal < price: return await ctx.reply(f'Error: Insufficient balance ({bal}) Required: ({stock.price * amount})')
+        if bal < price: return await ctx.reply(f'Error: Insufficient balance: {bal / 100}\nRequired: {price / 100}')
 
         await stock_transaction(ctx.author.id, stock.ticker_symbol, -price, amount)
-        await ctx.reply(f'Successfully purchased {amount} `{stock.ticker_symbol}` stocks for {price} peanuts\nYour balance is now at {bal - price} peanuts')
+        await ctx.reply(f'Successfully purchased {amount} `{stock.ticker_symbol}` stocks for {price / 100} peanuts\nYour balance is now at {(bal - price) / 100} peanuts')
 
     @commands.command(brief='Relish in your earnings! Arguments in order: amount, symbol', aliases=['liquidate'], ignore_extra=False)
     @commands.cooldown(1, 5, BucketType.user)
     async def sell(self, ctx: Context, amount: str, ticker_symbol: str):
-        amount = number_g(amount)
+        amount = number_greater(amount)
         stock = Stock(ticker_symbol)
         bal = await fetch_balance(ctx.author.id)
-        gains = (stock.price * amount)
+        gains = int(stock.price * amount * 100)
         available = await fetch_stocks(ctx.author.id, stock.ticker_symbol)
 
-        if available < amount: return await ctx.reply(f'Error: Insufficient stocks to sell ({available}) Wanted: ({amount})')
+        if available < amount: return await ctx.reply(f'Error: Insufficient stocks to sell: {available}\nWanting to sell: {amount}')
 
         await stock_transaction(ctx.author.id, stock.ticker_symbol, gains, -amount)
-        await ctx.reply(f'Successfully sold {amount} `{stock.ticker_symbol}` stocks for {gains} peanuts\nYour balance is now at {bal + gains} peanuts')
+        await ctx.reply(f'Successfully sold {amount} `{stock.ticker_symbol}` stocks for {gains / 100} peanuts\nYour balance is now at {(bal + gains) / 100} peanuts')
 
 
 async def setup(bot):

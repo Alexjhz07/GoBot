@@ -26,10 +26,10 @@ class Recreation(Cog):
         prediction = 'heads' if prediction == 'h' else 'tails'
         if prediction == result:
             await add_funds(ctx.author.id, amount, 'flip')
-            await ctx.reply(f'Success! You bet `{prediction}` and the coin landed `{result}` up.\nYou just gained {amount} peanuts, your pockets now contain {bal + amount} peanuts.')
+            await ctx.reply(f'Success! You bet `{prediction}` and the coin landed `{result}` up.\nYou gained {amount} peanuts, your pockets now contain {bal + amount} peanuts.')
         else:
             await add_funds(ctx.author.id, -amount, 'flip')
-            await ctx.reply(f'Bad luck... You bet `{prediction}` and the coin landed `{result}` up.\nYou just lost {amount} peanuts, your pockets now contain {bal - amount} peanuts.')
+            await ctx.reply(f'Bad luck... You bet `{prediction}` and the coin landed `{result}` up.\nYou lost {amount} peanuts, your pockets now contain {bal - amount} peanuts.')
 
     @commands.command(brief='A pleasant game of wordle', aliases=['guess', 'w'], ignore_extra=False)
     @commands.cooldown(1, 1, BucketType.user)

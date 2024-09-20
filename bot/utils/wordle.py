@@ -36,7 +36,7 @@ async def get_wordle_response(user_id: int, guess: str) -> list:
 def generate_win(resp: any):
     embed = Embed(
         title="Winner Winner Chicken Dinner", 
-        description=f"You completed the daily wordle in {resp['guess_count']} guesses and gained {resp['reward']} peanuts :tada:\nThanks for playing today, come back tomorrow for another puzzle!", 
+        description=f"You completed the daily wordle in {resp['guess_count']} guesses and gained {resp['reward'] / 100} peanuts :tada:\nThanks for playing today, come back tomorrow for another puzzle!", 
         color=0xffd500
     )
     view = WordleView(resp)
@@ -46,7 +46,7 @@ def generate_win(resp: any):
 def generate_already_won(resp: any):
     embed = Embed(
         title="Already Won", 
-        description=f"You completed the daily wordle in {resp['guess_count']} guesses and gained {resp['reward']} peanuts :tada:\nThanks for playing today, come back tomorrow for another puzzle!\nToday's word for you was ||`{resp['answer']}`||", 
+        description=f"You completed the daily wordle in {resp['guess_count']} guesses and gained {resp['reward'] / 100} peanuts :tada:\nThanks for playing today, come back tomorrow for another puzzle!\nToday's word for you was ||`{resp['answer']}`||", 
         color=0xffd500
     )
     
@@ -67,7 +67,7 @@ def generate_miss(resp: any):
         description=f"Nice try, but no cigar\nYou have {6 - resp['guess_count']} guesses remaining\n\nGrey = This letter is not in the word\nBlue = This letter is in the word but is in the wrong spot\nGreen = This letter is in the word and is in the right spot", 
         color=0x5539cc
     )
-    embed.set_footer(text='Rewards are higher for winning with fewer guesses:\n400k, 200k, 100k, 50k, 25k, 12.5k')
+    embed.set_footer(text='Rewards are higher for winning with fewer guesses:\n4k, 2k, 1k, 500, 250, 125')
 
     view = WordleView(resp)
 
