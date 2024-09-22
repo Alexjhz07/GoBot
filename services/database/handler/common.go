@@ -24,6 +24,7 @@ type DatabaseResponse struct {
 // Returns decoding error or argument length error if they occur
 func parseRequestJSON(r *http.Request) (*DatabaseRequest, error) {
 	decoder := json.NewDecoder(r.Body)
+	decoder.UseNumber()
 
 	ret := &DatabaseRequest{}
 	err := decoder.Decode(ret)
