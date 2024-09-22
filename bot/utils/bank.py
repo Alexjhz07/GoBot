@@ -2,7 +2,6 @@ from lib.exceptions import BankTimerException
 from utils.db import post
 from utils.caster import str_time_until
 from uuid import uuid4
-from datetime import datetime
 
 async def fetch_balance(user_id: int):
     res = await post('db', 'query', {'queries': ['SELECT SUM(transaction_amount) FROM bank_transactions WHERE user_id=$1'], 'arguments': [[user_id]]})
