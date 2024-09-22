@@ -14,13 +14,13 @@ const WIN_REWARDS = [400000, 200000, 100000, 50000, 25000, 12500]
 
 // Class to generate a unique game for each player based on the date
 class GameContext {
-    public user_id: number
+    public user_id: string
     public date_string: string
     public word: string
     public word_list: string[]
     public word_length: number
 
-    constructor(user_id: number) {
+    constructor(user_id: string) {
         this.user_id = user_id
         const today = new Date()
         this.date_string = today.toISOString().substring(0, 10)
@@ -29,7 +29,7 @@ class GameContext {
         this.word_length = this.word.length
     }
 
-    private get_daily_word(date_string: string, user_id: number): string {
+    private get_daily_word(date_string: string, user_id: string): string {
         const seed = `${date_string}_${user_id}`
         // Harnessing the power of a seeded chaotic generator from here:
         // https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript
@@ -62,10 +62,9 @@ export default class Wordle {
         this.current_date_string = today.toISOString().substring(0, 10)
     }
 
-    public async make_guess(user_id: number, guess: string) {
+    public async make_guess(user_id: string, guess: string) {
         try {
             guess = String(guess).toUpperCase()
-            user_id = Number(user_id)
         } catch (e: any) {
             return {"status": "error", "message": `Type cast failed for user_id or guess: ${e.message}`}
         }
