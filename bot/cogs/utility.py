@@ -8,7 +8,6 @@ class Utility(Cog):
     @commands.cooldown(5, 1, BucketType.user)
     async def stats(self, ctx: Context):
         stats = await fetch_stats(ctx.author.id)
-        print(stats)
 
         name = ctx.author.nick or ctx.author.name
         embed=Embed(color=ctx.author.color)
