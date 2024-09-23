@@ -40,7 +40,7 @@ class Bank(Cog):
         author_name = ctx.author.nick or ctx.author.name
 
         if jackpot == 42:
-            await add_funds(user_id, 30000, 'jackpot')
+            await add_funds(user_id, 30000, 'stonks')
             bal = await fetch_balance(user_id)
             await ctx.reply(f'***JACKPOT!***\n${author_name} just won the stonks jackpot!\n*300* peanuts were added to their balance!\nThey now have {bal} peanuts in their account')
         
