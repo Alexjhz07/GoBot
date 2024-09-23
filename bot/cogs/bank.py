@@ -75,7 +75,7 @@ class Bank(Cog):
         try:
             collected = await collect_timely_funds(ctx.author.id, timer)
             balance = await fetch_balance(ctx.author.id)
-            await ctx.reply(f"Successfully collected {collected / 100} peanuts from {timer}!\nYour now have {balance / 100} peanuts in your wallet")
+            await ctx.reply(f"Successfully collected {collected / 100} peanuts from {timer}!\nYou now have {balance / 100} peanuts in your wallet")
         except BankTimerException as e:
             await ctx.reply(e)
 
