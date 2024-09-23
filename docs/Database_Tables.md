@@ -161,18 +161,18 @@ CREATE TABLE public.bank_transactions (
   - `weekly`: Weekly money collection
   - `monthly`: Monthly money collection
   - `stonks`: Frequent money collection
-  - `jackpot`: Frequent money collection, with some additional luck
   - `transfer`: Money transferred in from or out to another user
   - `flip`: Money won or lost from a coin flip
   - `wordle`: Money won from winning a wordle game
   - `stock`: Money invested or returned from stocks
+  - `system`: System related changes, such as data transfers or events
 
 The name `transaction` is only used in the sense of a bank transaction.
 Transactions as in grouped requests in the psql sense are denoted in the `group_uuid` column.
 
 Note that the bank transactions are currently used for everything money related to make things easy.
 In the future, it may be wise to have a separate table for summarized account info.
-This will allow us to retrieve balances and aggregate info without needed to calculate it each time.
+This will allow us to retrieve balances and aggregate info without needing to calculate it each time.
 
 ## stock_transactions
 
