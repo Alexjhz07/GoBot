@@ -1,4 +1,5 @@
 from utils.db import post
+from lib.exceptions import InvalidLinkCodeException
 
 async def fetch_stats(user_id: int):
     res = await post('db', 'query', {
@@ -22,3 +23,30 @@ async def fetch_stats(user_id: int):
         acc.update(item[0])
 
     return acc
+
+async def link_account(code: str, user_id: int):
+    res = await post('db', 'query', {
+        'queries': ["SELECT t.email, t.created_at FROM (SELECT DISTINCT ON (email) email, code, user_id, created_at FROM user_linking_history WHERE created_at >= NOW() - INTERVAL '10 minutes' ORDER BY email, created_at desc, user_id) AS t WHERE t.user_id = -1 AND code = $1"], 
+        'arguments': [[code]]
+    })
+
+    res = res['responses'][0]
+
+    if len(res) == 0:
+        raise InvalidLinkCodeException('The code entered is either invalid or expired\nPlease try again with a different code')
+    if len(res) > 1:
+        raise InvalidLinkCodeException('Duplicate codes have been found\nPlease regenerate your code and try again')
+    
+    email = res[0]['email']
+    created_at = res[0]['created_at']
+
+    res = await post('db', 'exec', {
+        'queries': [
+            "UPDATE user_linking_history SET user_id=$1 WHERE email=$2 AND code=$3 AND created_at=$4",
+            "UPDATE user_authentication SET user_id=$1 WHERE email=$2"
+        ], 
+        'arguments': [
+            [user_id, email, code, created_at],
+            [user_id, email]
+        ]
+    })

@@ -1,7 +1,7 @@
 from discord.ext.commands import Cog, Context, BucketType
 from discord.ext import commands
 from discord import Embed
-from utils.utility import fetch_stats
+from utils.utility import fetch_stats, link_account
 
 class Utility(Cog):
     @commands.command(brief='User statistics from bond bot')
@@ -16,6 +16,12 @@ class Utility(Cog):
         embed.add_field(name="Banking", value=f"**Stonks Requested**: `{stats['stonk_count']}` [`{int(stats['stonk_sum']) / 100}`]", inline=False)
         embed.add_field(name="Flips", value=f"**Won**: `{stats['flip_won_count']}` [`{int(stats['flip_won_sum']) / 100}`] **Lost**: `{stats['flip_lost_count']}` [`{int(stats['flip_lost_sum']) / 100}`] **Net**: `{(int(stats['flip_won_sum']) + int(stats['flip_lost_sum'])) / 100}`", inline=False)
         await ctx.reply(embed=embed)
+
+    @commands.command(brief='Link your email account to bond', ignore_extra=False)
+    @commands.cooldown(5, 1, BucketType.user)
+    async def link(self, ctx: Context, code: str):
+        await link_account(code, ctx.author.id)
+        await ctx.reply("Your account has successfully been linked!\nFeel free to use this link to logout, then log back in again:\nhttps://bond.azhang.ca/logout")
 
 async def setup(bot):
     await bot.add_cog(Utility())
