@@ -27,9 +27,9 @@ def str_time_until(date_string: str) -> str:
     else:
         return f'{seconds} second{pluralize(seconds)}'
 
-# Return 's' if number is plural (greater than 1) else None
+# Return 's' if number is plural (greater than 1) else empty string
 def pluralize(value: int):
     if value > 1: 
         return 's'
     else:
-        return None
+        return ''
