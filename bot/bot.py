@@ -14,20 +14,11 @@ class GBot(Bot):
         
         try:
             await assert_user_exists(message.author)
-
-            if message.channel.id != int(getenv('BOT_CHANNEL')): return # TEMP GUARD !!!
-                
             await super().on_message(message)
         except PostException as e:
-            if message.channel.id != int(getenv('BOT_CHANNEL')): # TEMP GUARD !!!
-                print(e)
-                return
-            await message.reply(f'Server-side Exception: {e}')
+            print(f'Server-side Exception: {e}')
         except Exception as e:
-            if message.channel.id != int(getenv('BOT_CHANNEL')): # TEMP GUARD !!!
-                print(e)
-                return
-            await message.reply(f'Exception: {e}')
+            print(f'Exception: {e}')
 
     async def load_cogs(self):
         for filename in listdir('./cogs'):
@@ -36,22 +27,18 @@ class GBot(Bot):
                 print(f'Loaded {filename}')
      
     async def on_command_error(self, ctx: Context, exception: Exception):
-        if ctx.channel.id != int(getenv('BOT_CHANNEL')): # TEMP GUARD !!!
-            print(exception)
-            return
-        
         if isinstance(exception, CommandNotFound):
             await ctx.reply(f'Unknown Command: {exception}')
         elif isinstance(exception, CommandOnCooldown):
             await ctx.reply(f'Command Cooldown: {exception}')
         elif isinstance(exception, MissingRequiredArgument):
             await ctx.reply(f'Missing Arguments: {exception}')
-        elif isinstance(exception, PostException):
-            await ctx.reply(f'Server-side Exception: {exception}')
         elif isinstance(exception, CommandInvokeError):
             await ctx.reply(f'{exception.original}')
+        elif isinstance(exception, PostException):
+            print(f'Server-side Exception: {exception}')
         else:
-            await ctx.reply(f'Exception: {exception}')
+            print(f'Exception: {exception}')
 
     async def start(self, TOKEN):
         await self.load_cogs()
