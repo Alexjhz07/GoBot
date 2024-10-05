@@ -1,7 +1,7 @@
 from os import listdir, getenv
 from discord import Message
 from discord.ext.commands import Bot, DefaultHelpCommand, Context
-from discord.ext.commands.errors import CommandNotFound, CommandOnCooldown, MissingRequiredArgument, CommandInvokeError
+from discord.ext.commands.errors import TooManyArguments, CommandNotFound, CommandOnCooldown, MissingRequiredArgument, CommandInvokeError
 from lib.exceptions import PostException
 from utils.user import assert_user_exists
 
@@ -17,12 +17,6 @@ class GBot(Bot):
             await super().on_message(message)
         except PostException as e:
             print(f'Server-side Exception: {e}')
-        except CommandNotFound as e:
-            await message.reply(f'Unknown Command: {e}')
-        except CommandOnCooldown as e:
-            await message.reply(f'Command Cooldown: {e}')
-        except MissingRequiredArgument as e:
-            await message.reply(f'Missing Arguments: {e}')
         except Exception as e:
             print(f'Exception: {e}')
 
@@ -39,6 +33,8 @@ class GBot(Bot):
             await ctx.reply(f'Command Cooldown: {exception}')
         elif isinstance(exception, MissingRequiredArgument):
             await ctx.reply(f'Missing Arguments: {exception}')
+        elif isinstance(exception, TooManyArguments):
+            await ctx.reply(f'Too Many Arguments: {exception}')
         elif isinstance(exception, CommandInvokeError):
             await ctx.reply(f'{exception.original}')
         elif isinstance(exception, PostException):
