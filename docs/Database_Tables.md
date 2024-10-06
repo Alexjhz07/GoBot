@@ -184,8 +184,7 @@ CREATE TABLE public.wordle_games (
 );
 ```
 
-The games will be unique per player, based on the seed (date string) combined and the player id
-This means that we do not need to store the words ona given day, as it can be computed at any time
+More information about this game can be found in the corresponding service README
 
 ## semantle_games
 
@@ -214,6 +213,8 @@ CREATE TABLE public.semantle_games (
 	CONSTRAINT semantle_games_user_information_fk FOREIGN KEY (user_id) REFERENCES public.user_information(user_id)
 );
 ```
+
+More information about this game can be found in the corresponding service README
 
 # Dashboard Tables
 
