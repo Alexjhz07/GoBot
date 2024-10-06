@@ -76,6 +76,7 @@ export default class Wordle {
         if (!this.loaded) {
             try {
                 await this.fetch_guess_counts(gc.date_string)
+                this.loaded = true
             } catch (e: any) {
                 return {"status": "error", "message": e.message}
             }
