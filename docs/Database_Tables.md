@@ -12,7 +12,7 @@ Certain tables must have an entry with certain fields set when a user is added t
 - `user_experience` - `user_id`
 - `bank_timer` - `user_id`
 
-# List of Tables
+# User Core Tables
 
 ## user_information [Small]
 
@@ -41,48 +41,6 @@ This is useful for someone outside of "the group" to browse the site with limite
 ```sql
 INSERT INTO user_information (user_id, username) VALUES (-1, 'Default User')
 ```
-
-## user_authentication [Small]
-
-| Column name | Type         | Properties  | CONSTRAINTS | DEFAULT | REFERENCES                |
-| ----------- | ------------ | ----------- | ----------- | ------- | ------------------------- |
-| email       | VARCHAR(255) | PRIMARY KEY |             |         |                           |
-| bcrypt      | VARCHAR(255) |             | NOT NULL    |         |                           |
-| user_id     | BIGINT       |             | NOT NULL    | -1      | user_information(user_id) |
-
-```sql
-CREATE TABLE public.user_authentication (
-	email varchar NOT NULL,
-	bcrypt varchar NOT NULL,
-	user_id bigint NOT NULL,
-	CONSTRAINT user_authentication_pk PRIMARY KEY (email)
-);
-```
-
-Note that we use bcrypt to hash the passwords, for which a salt is included in the output.
-Thus, we do not require a separate column to store salts.
-
-## authentication_history
-
-| Column name | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES |
-| ----------- | ------------ | ----------- | ----------- | ----------------- | ---------- |
-| id          | SERIAL       | PRIMARY KEY |             |                   |            |
-| email       | VARCHAR(255) |             | NOT NULL    |                   |            |
-| status      | VARCHAR(255) |             | NOT NULL    |                   |            |
-| created_at  | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |            |
-
-```sql
-CREATE TABLE public.authentication_history (
-	id SERIAL NOT NULL,
-	email varchar NOT NULL,
-	status varchar NOT NULL,
-	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	CONSTRAINT authentication_history_pk PRIMARY KEY (id)
-);
-```
-
-Keeps track of login attempts.
-Use this table to stop repeated logins with the wrong credentials.
 
 ## user_experience [Small]
 
@@ -124,6 +82,8 @@ CREATE TABLE public.bank_timer (
 
 These are loaded once at the start of the bot and cached for quick use.
 Rewrites to bank timers are infrequent and must be persisted. That is why this table exists.
+
+# User Financial Tables
 
 ## bank_transactions
 
@@ -198,6 +158,8 @@ CREATE TABLE public.stock_transactions (
 );
 ```
 
+# Game Tables
+
 ## wordle_games
 
 | Column name | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES                |
@@ -215,8 +177,8 @@ CREATE TABLE public.wordle_games (
 	user_id bigint NOT NULL,
 	guess_word varchar NOT NULL,
 	date_string varchar NOT NULL,
-	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	win_flag bool DEFAULT false NOT NULL,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	CONSTRAINT wordle_games_pk PRIMARY KEY (guess_id),
 	CONSTRAINT wordle_games_user_information_fk FOREIGN KEY (user_id) REFERENCES public.user_information(user_id)
 );
@@ -224,6 +186,78 @@ CREATE TABLE public.wordle_games (
 
 The games will be unique per player, based on the seed (date string) combined and the player id
 This means that we do not need to store the words ona given day, as it can be computed at any time
+
+## semantle_games
+
+| Column name | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES                |
+| ----------- | ------------ | ----------- | ----------- | ----------------- | ------------------------- |
+| guess_id    | SERIAL       | PRIMARY KEY |             |                   |                           |
+| user_id     | BIGINT       |             | NOT NULL    |                   | user_information(user_id) |
+| guess_word  | VARCHAR(255) |             | NOT NULL    |                   |                           |
+| win_word    | VARCHAR(255) |             | NOT NULL    |                   |                           |
+| model_name  | VARCHAR(255) |             | NOT NULL    |                   |                           |
+| date_string | VARCHAR(255) |             | NOT NULL    |                   |                           |
+| win_flag    | BOOLEAN      |             | NOT NULL    | FALSE             |                           |
+| created_at  | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |                           |
+
+```sql
+CREATE TABLE public.semantle_games (
+	guess_id serial NOT NULL,
+	user_id bigint NOT NULL,
+	guess_word varchar NOT NULL,
+	win_word varchar NOT NULL,
+	model_name varchar NOT NULL,
+	date_string varchar NOT NULL,
+	win_flag bool DEFAULT false NOT NULL,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	CONSTRAINT semantle_games_pk PRIMARY KEY (guess_id),
+	CONSTRAINT semantle_games_user_information_fk FOREIGN KEY (user_id) REFERENCES public.user_information(user_id)
+);
+```
+
+# Dashboard Tables
+
+## user_authentication [Small]
+
+| Column name | Type         | Properties  | CONSTRAINTS | DEFAULT | REFERENCES                |
+| ----------- | ------------ | ----------- | ----------- | ------- | ------------------------- |
+| email       | VARCHAR(255) | PRIMARY KEY |             |         |                           |
+| bcrypt      | VARCHAR(255) |             | NOT NULL    |         |                           |
+| user_id     | BIGINT       |             | NOT NULL    | -1      | user_information(user_id) |
+
+```sql
+CREATE TABLE public.user_authentication (
+	email varchar NOT NULL,
+	bcrypt varchar NOT NULL,
+	user_id bigint NOT NULL,
+	CONSTRAINT user_authentication_pk PRIMARY KEY (email)
+);
+```
+
+Note that we use bcrypt to hash the passwords, for which a salt is included in the output.
+Thus, we do not require a separate column to store salts.
+
+## authentication_history
+
+| Column name | Type         | Properties  | CONSTRAINTS | DEFAULT           | REFERENCES |
+| ----------- | ------------ | ----------- | ----------- | ----------------- | ---------- |
+| id          | SERIAL       | PRIMARY KEY |             |                   |            |
+| email       | VARCHAR(255) |             | NOT NULL    |                   |            |
+| status      | VARCHAR(255) |             | NOT NULL    |                   |            |
+| created_at  | TIMESTAMPTZ  |             | NOT NULL    | CURRENT_TIMESTAMP |            |
+
+```sql
+CREATE TABLE public.authentication_history (
+	id SERIAL NOT NULL,
+	email varchar NOT NULL,
+	status varchar NOT NULL,
+	created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	CONSTRAINT authentication_history_pk PRIMARY KEY (id)
+);
+```
+
+Keeps track of login attempts.
+Use this table to stop repeated logins with the wrong credentials.
 
 ## community_posts
 
