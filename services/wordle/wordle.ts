@@ -82,7 +82,7 @@ export default class Wordle {
             }
         }
         
-        if (this.players[user_id]?.win_flag) return {"status": "already-won", "guess_count": this.players[user_id].guess_count, "reward": WIN_REWARDS[this.players[user_id].guess_count], "answer": gc.word}
+        if (this.players[user_id]?.win_flag) return {"status": "already-won", "guess_count": this.players[user_id].guess_count, "reward": WIN_REWARDS[this.players[user_id].guess_count - 1], "answer": gc.word}
         if (this.players[user_id]?.guess_count >= 6) return {"status": "out-of-tries", "guess_count": this.players[user_id].guess_count, "answer": gc.word}
 
         if (!this.players[user_id]) this.players[user_id] = {"win_flag": 0, "guess_count": 0}
