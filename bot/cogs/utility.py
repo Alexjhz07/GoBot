@@ -23,5 +23,10 @@ class Utility(Cog):
         await link_account(code, ctx.author.id)
         await ctx.reply("Your account has successfully been linked!\nFeel free to use this link to logout, then log back in again:\nhttps://bond.azhang.ca/logout")
 
+    @commands.command(brief='Prints the alphabet (Useful for wordle)', ignore_extra=True)
+    @commands.cooldown(5, 1, BucketType.user)
+    async def alpha(self, ctx: Context):
+        await ctx.reply("a b c d e f g h i j k l m n o p q r s t u v w x y z")
+
 async def setup(bot):
     await bot.add_cog(Utility())
