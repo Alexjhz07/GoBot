@@ -20,7 +20,7 @@ class WordleView(View):
             self.add_item(Button(label=letters[i], style=COLOUR_MAP[results[i]], disabled=True))
 
 async def get_wordle_response(user_id: int, guess: str) -> list:
-    response = await post('wordle', 'game', { "user_id": str(user_id), "guess": guess })
+    response = await post('wordle', 'wordle', { "user_id": str(user_id), "guess": guess })
     if response['status'] == 'miss':
         return _generate_miss(response)
     elif response['status'] == 'invalid-guess':

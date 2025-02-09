@@ -7,7 +7,7 @@ const wordle = new Wordle()
 
 app.use(express.json())
 
-app.post('/game', (req, res) => {
+app.post('/wordle', (req, res) => {
     if (!req.body?.user_id || !req.body?.guess) {
         res.status(400)
         res.send({"status": "error", "message": 'user_id or guess missing from request'})
