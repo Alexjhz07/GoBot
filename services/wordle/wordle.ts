@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import axios from 'axios';
 
 // The vocabulary of the game alongside allowed entry words
-const VALID_WORDS_LIST: string[] = fs.readFileSync('valid_wordle_game_words.txt', { encoding: 'utf-8', flag: 'r' }).split('\n')
-const VALID_ENTRY_LIST: string[] = fs.readFileSync('valid_wordle_entry_words.txt', { encoding: 'utf-8', flag: 'r' }).split('\n')
+const VALID_WORDS_LIST: string[] = fs.readFileSync('./assets/wordle_game_words.txt', { encoding: 'utf-8', flag: 'r' }).split('\n')
+const VALID_ENTRY_LIST: string[] = fs.readFileSync('./assets/wordle_entry_words.txt', { encoding: 'utf-8', flag: 'r' }).split('\n')
 const VALID_WORDS_DICT: any = {}
 const VALID_ENTRY_DICT: any = {}
 
