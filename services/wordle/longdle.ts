@@ -63,7 +63,7 @@ class PlayerCache {
     public win_flag: boolean = false
     public guess_count: number = 0
     public previous_guesses: string[] = []
-    public previous_results: string[] = []
+    public previous_results: string[][] = []
     public valid_letter_map: number = 67108863 // Bit map
 
     private invalidate_letter(letter: string) {
@@ -114,14 +114,14 @@ export default class Longdle {
 
         var cache = this.players[user_id]
         
-        if (cache?.win_flag) return {"status": "already-won", "guess_count": cache.guess_count, "reward": gc.max_reward / ( 2 ** (cache.guess_count - 1)), "answer": gc.word, "alpha_bits": cache.valid_letter_map}
-        if (cache?.guess_count >= gc.max_guesses) return {"status": "out-of-tries", "word_length": gc.word_length, "guess_count": cache.guess_count, "answer": gc.word, "alpha_bits": cache.valid_letter_map}
+        if (cache?.win_flag) return {"status": "already-won", "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "reward": gc.max_reward / ( 2 ** (cache.guess_count - 1)), "answer": gc.word, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
+        if (cache?.guess_count >= gc.max_guesses) return {"status": "out-of-tries", "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "answer": gc.word, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
 
         if (!cache) {
             this.players[user_id] = new PlayerCache()
             cache = this.players[user_id]
         }
-        if (!(VALID_ENTRY_DICT[guess] || VALID_WORDS_DICT[guess] || guess.length > gc.word_length)) return {"status": "invalid-guess","word_length": gc.word_length, "guess_count": cache.guess_count, "alpha_bits": cache.valid_letter_map};
+        if (!(VALID_WORDS_DICT[guess] || VALID_ENTRY_DICT[guess]) || guess.length > gc.word_length) return {"status": "invalid-guess","word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results};
         
         if (gc.word === guess) {
             const reward = Math.floor(gc.max_reward / ( 2 ** cache.guess_count))
@@ -138,7 +138,7 @@ export default class Longdle {
             }
             cache.win_flag = true
             cache.guess_count += 1
-            return {"status": "win", "guess": gc.word_list, "matching": gc.word_length, "misplaced": 0, "word_length": gc.word_length, "guess_count": cache.guess_count, "reward": reward, "result":  Array(gc.word_length).fill("matching"), "alpha_bits": cache.valid_letter_map}
+            return {"status": "win", "guess": gc.word_list, "matching": gc.word_length, "misplaced": 0, "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "reward": reward, "result":  Array(gc.word_length).fill("matching"), "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
         }
 
         try {
@@ -152,41 +152,48 @@ export default class Longdle {
         }
         cache.guess_count += 1
 
+        const result = this.get_guess_result(gc.word, guess)
+
+        cache.invalidate_string(gc.word, guess)
+        cache.previous_guesses.push(guess)
+        cache.previous_results.push(result)
+
+        return {"status": "miss", "guess": guess.split(""), "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "result": result, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
+    }
+
+    private start_new_day(new_date_string: string) {
+        this.loaded = false
+        this.current_date_string = new_date_string
+    }
+
+    private get_guess_result(correct_string: string, guess_string: string) {
         let tracker: any = {}
-        for (let i = 0; i < gc.word_length; i++) !tracker[gc.word[i]] ? tracker[gc.word[i]] = 1 : tracker[gc.word[i]] += 1
+        for (let i = 0; i < correct_string.length; i++) !tracker[correct_string[i]] ? tracker[correct_string[i]] = 1 : tracker[correct_string[i]] += 1
         
-        let guess_list = guess.split("") 
-        let result = guess.split("")
+        let result = guess_string.split("")
 
         let matching = 0
         let misplaced = 0
         // Record Matching Characters
-        for (let i = 0; i < gc.word_length && i < guess.length; i++) {
-            if (guess_list[i] === gc.word_list[i]) {
+        for (let i = 0; i < correct_string.length && i < guess_string.length; i++) {
+            if (guess_string.charAt(i) === correct_string.charAt(i)) {
                 result[i] = "matching"
-                tracker[guess_list[i]] -= 1
+                tracker[guess_string.charAt(i)] -= 1
                 matching += 1
             } else {
                 result[i] = "absent"
             }
         }
         // Record Misplaced Characters
-        for (let i = 0; i < gc.word_length && i < guess.length; i++) {
-            if (guess_list[i] !== gc.word_list[i] && tracker[guess_list[i]] != undefined && tracker[guess_list[i]] > 0) {
+        for (let i = 0; i <  correct_string.length && i < guess_string.length; i++) {
+            if (guess_string.charAt(i) !== correct_string.charAt(i) && tracker[guess_string.charAt(i)] != undefined && tracker[guess_string.charAt(i)] > 0) {
                 result[i] = "misplaced"
                 misplaced += 1
-                tracker[guess_list[i]] -= 1
+                tracker[guess_string.charAt(i)] -= 1
             }
         }
 
-        cache.invalidate_string(gc.word, guess)
-
-        return {"status": "miss", "guess": guess_list, "matching": matching, "misplaced": misplaced, "word_length": gc.word_length, "guess_count": cache.guess_count, "result": result, "alpha_bits": cache.valid_letter_map}
-    }
-
-    private start_new_day(new_date_string: string) {
-        this.loaded = false
-        this.current_date_string = new_date_string
+        return result
     }
 
     private async reload_cache(date_string: string) {
@@ -206,7 +213,15 @@ export default class Longdle {
                 if (!this.players[player_id]) {
                     this.players[player_id] = new PlayerCache()
                 }
-                this.players[player_id].invalidate_string(r.daily_word, r.guess_word)
+
+                const guess = r.guess_word
+                const daily = r.daily_word
+                const result = this.get_guess_result(daily, guess)
+
+                this.players[player_id].previous_guesses.push(guess)
+                this.players[player_id].previous_results.push(result)
+                this.players[player_id].invalidate_string(daily, guess)
+                
                 this.players[player_id].guess_count += 1
             }
 
