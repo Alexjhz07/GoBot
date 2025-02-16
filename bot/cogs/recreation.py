@@ -3,7 +3,7 @@ from discord.ext.commands import Cog, Context, BucketType
 from discord.ext import commands
 from utils.bank import fetch_balance, add_funds
 from utils.wordle import get_wordle_response
-from utils.longdle import get_longdle_response, get_longdle_intro
+from utils.longdle import get_longdle_response, get_longdle_intro, add_longdle_word
 
 class Recreation(Cog):
     @commands.command(brief='Flip a coin for double the peanuts or nothing!', aliases=['flip'], ignore_extra=False)
@@ -47,6 +47,11 @@ class Recreation(Cog):
         if guess == None:
             return await ctx.reply(embed=get_longdle_intro())
         await ctx.reply(embed=await get_longdle_response(ctx.author.id, guess))
+
+    @commands.command(brief='Add a word to the accepted Longdle words for input', ignore_extra=False)
+    @commands.cooldown(1, 1, BucketType.user)
+    async def longadd(self, ctx: Context, word: str):
+        await ctx.reply(embed=await add_longdle_word(ctx.author.id, word))
 
 async def setup(bot):
     await bot.add_cog(Recreation())

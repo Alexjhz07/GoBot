@@ -52,6 +52,13 @@ def get_longdle_intro() -> str:
     embed.set_footer(text=LONGDLE_FOOTER)
     return embed 
 
+async def add_longdle_word(user_id: int, word: str) -> list:
+    response = await post('wordle', 'longdle/custom', { "user_id": str(user_id), "word": word })
+    if response['status'] == 'success':
+        return _generate_custom_accepted(response)
+    elif response['status'] == 'error':
+        return _generate_custom_rejected(response)
+
 async def get_longdle_response(user_id: int, guess: str) -> list:
     response = await post('wordle', 'longdle', { "user_id": str(user_id), "guess": guess })
     if response['status'] == 'miss':
@@ -172,4 +179,26 @@ def _generate_error(resp: any):
         color=0xff0000
     )
     
+    return embed
+
+def _generate_custom_rejected(response: any):
+    title = get_ansi_raw('Rejected', style=ANSI_Style.bold_underline, color=ANSI_Color.white)
+    body_main=get_ansi_raw(response['message'])
+    
+    embed = Embed(
+        description=wrap_list([title, body_main]), 
+        color=0xffffff
+    )
+
+    return embed
+
+def _generate_custom_accepted(response: any):
+    title = get_ansi_raw('Success', style=ANSI_Style.bold_underline, color=ANSI_Color.green)
+    body_main=get_ansi_raw(response['message'])
+    
+    embed = Embed(
+        description=wrap_list([title, body_main]), 
+        color=0xffffff
+    )
+
     return embed
