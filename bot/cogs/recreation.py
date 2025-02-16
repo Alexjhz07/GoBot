@@ -3,6 +3,7 @@ from discord.ext.commands import Cog, Context, BucketType
 from discord.ext import commands
 from utils.bank import fetch_balance, add_funds
 from utils.wordle import get_wordle_response
+from utils.longdle import get_longdle_response, get_longdle_intro
 
 class Recreation(Cog):
     @commands.command(brief='Flip a coin for double the peanuts or nothing!', aliases=['flip'], ignore_extra=False)
@@ -31,7 +32,7 @@ class Recreation(Cog):
             await add_funds(ctx.author.id, -amount, 'flip')
             await ctx.reply(f'Bad luck... You bet `{prediction}` and the coin landed `{result}` up.\nYou lost {amount / 100} peanuts, your pockets now contain {(bal - amount) / 100} peanuts.')
 
-    @commands.command(brief='A pleasant game of wordle', aliases=['guess', 'w'], ignore_extra=False)
+    @commands.command(brief='A pleasant game of wordle', aliases=['w'], ignore_extra=False)
     @commands.cooldown(1, 1, BucketType.user)
     async def wordle(self, ctx: Context, guess: str):
         resp = await get_wordle_response(ctx.author.id, guess)
@@ -40,6 +41,12 @@ class Recreation(Cog):
         else:
             await ctx.reply(embed=resp[0], view=resp[1])
 
+    @commands.command(brief='An intense game of longdle', aliases=['l'], ignore_extra=False)
+    @commands.cooldown(1, 1, BucketType.user)
+    async def longdle(self, ctx: Context, guess: str = None):
+        if guess == None:
+            return await ctx.reply(embed=get_longdle_intro())
+        await ctx.reply(embed=await get_longdle_response(ctx.author.id, guess))
 
 async def setup(bot):
     await bot.add_cog(Recreation())

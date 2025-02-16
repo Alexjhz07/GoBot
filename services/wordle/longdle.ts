@@ -158,7 +158,7 @@ export default class Longdle {
         cache.previous_guesses.push(guess)
         cache.previous_results.push(result)
 
-        return {"status": "miss", "guess": guess.split(""), "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "result": result, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
+        return {"status": "miss", "guess": guess.split(""), "word_length": gc.word_length, "answer": gc.word, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "result": result, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
     }
 
     private start_new_day(new_date_string: string) {

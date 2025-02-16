@@ -50,13 +50,20 @@ class ANSI_Color(Enum):
             raise ValueError(f"'{name}' is not a valid text color. Available colors: {[c.name for c in cls]}")
 
 def get_ansi_block(text: str, style = ANSI_Style.normal, background = None, color = ANSI_Color.white):
-    return f"```ansi\n{get_ansi_raw(text, style, background, color)}```"
+    return wrap_text(get_ansi_raw(text, style, background, color))
     
 def get_ansi_raw(text: str, style = ANSI_Style.normal, background = None, color = ANSI_Color.white):
     if background:
         return f"\u001b[{style.value};{background.value};{color.value}m{text}\u001b[0m"
     else:
         return f"\u001b[{style.value};{color.value}m{text}\u001b[0m"
+
+def wrap_text(ansi_text: str):
+    return f'```ansi\n{ansi_text}```'
+
+def wrap_list(ansi_list: list):
+    ansi_message = '\n\n'.join(ansi_list)
+    return f'```ansi\n{ansi_message}```'
 
 def get_rainbow_table():
     lines = []
