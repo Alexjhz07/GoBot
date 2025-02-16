@@ -164,6 +164,12 @@ export default class Longdle {
         return {"status": "miss", "guess": guess.split(""), "word_length": gc.word_length, "answer": gc.word, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "result": result, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
     }
 
+    public async get_word_length(user_id: string) {
+        const gc = new GameContext(user_id)
+        if (gc.date_string != this.current_date_string) this.start_new_day(gc.date_string)
+        return {"length": gc.word_length}
+    }
+
     public async add_custom_word(user_id: string, word: string) {
         try {
             word = String(word).toUpperCase()

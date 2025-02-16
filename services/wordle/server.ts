@@ -42,6 +42,17 @@ app.post('/longdle/custom', (req, res) => {
     })
 });
 
+app.post('/longdle/custom/length', (req, res) => {
+    if (!req.body?.user_id) {
+        res.status(400)
+        res.send({"status": "error", "message": 'user_id missing from request'})
+        return
+    }
+    longdle.get_word_length(req.body.user_id).then((result) => {
+        res.send(result)  
+    })
+});
+
 app.listen(port, () => {
     console.log(`Wordle is running on port ${port}`);
 });
