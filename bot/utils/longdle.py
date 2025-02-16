@@ -14,6 +14,8 @@ LONDGLE_INTRO = f"""{get_ansi_raw("Welcome to Longdle, the expanded version of W
 
 {get_ansi_raw("How to Play", style=ANSI_Style.bold_underline, color=ANSI_Color.yellow)}
 
+{get_ansi_raw("Use")} {get_ansi_raw(";longlength", color=ANSI_Color.pink)} {get_ansi_raw("or")} {get_ansi_raw(";ll", color=ANSI_Color.pink)} {get_ansi_raw("at the start of the day to obtain your word length of the day.")}
+
 {get_ansi_raw("The length of the daily word can be anywhere from 5 to 15 characters long. This information will be provided to you every time, and you will recieve more guesses based on how long the word is. There are also higher potential rewards for words of a greater length!")}
 
 {get_ansi_raw("Your guess must have a length between 5 and the length of the word of the day. For example, if your the word of the day is 10 characters long, your guess can be 5, 7 or or 10 characters long but not 11 or 4.")}
@@ -58,6 +60,10 @@ async def add_longdle_word(user_id: int, word: str) -> list:
         return _generate_custom_accepted(response)
     elif response['status'] == 'error':
         return _generate_custom_rejected(response)
+    
+async def get_longdle_length(user_id: int):
+    response = await post('wordle', 'longdle/custom/length', { "user_id": str(user_id) })
+    return f"Your daily word length is `{response['length']}`"
 
 async def get_longdle_response(user_id: int, guess: str) -> list:
     response = await post('wordle', 'longdle', { "user_id": str(user_id), "guess": guess })

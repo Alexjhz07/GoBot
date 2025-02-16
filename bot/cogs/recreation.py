@@ -3,7 +3,7 @@ from discord.ext.commands import Cog, Context, BucketType
 from discord.ext import commands
 from utils.bank import fetch_balance, add_funds
 from utils.wordle import get_wordle_response
-from utils.longdle import get_longdle_response, get_longdle_intro, add_longdle_word
+from utils.longdle import get_longdle_response, get_longdle_intro, get_longdle_length, add_longdle_word
 
 class Recreation(Cog):
     @commands.command(brief='Flip a coin for double the peanuts or nothing!', aliases=['flip'], ignore_extra=False)
@@ -41,12 +41,18 @@ class Recreation(Cog):
         else:
             await ctx.reply(embed=resp[0], view=resp[1])
 
-    @commands.command(brief='An intense game of longdle', aliases=['l'], ignore_extra=False)
+    @commands.command(brief='An intense game of longdle', aliases=['l', 'long'], ignore_extra=False)
     @commands.cooldown(1, 1, BucketType.user)
     async def longdle(self, ctx: Context, guess: str = None):
         if guess == None:
             return await ctx.reply(embed=get_longdle_intro())
         await ctx.reply(embed=await get_longdle_response(ctx.author.id, guess))
+
+    @commands.command(brief='Tells you the length of your word', aliases=['ll'], ignore_extra=True)
+    @commands.cooldown(1, 1, BucketType.user)
+    async def longlength(self, ctx: Context):
+        await ctx.reply(await get_longdle_length(ctx.author.id))
+        
 
     @commands.command(brief='Add a word to the accepted Longdle words for input', ignore_extra=False)
     @commands.cooldown(1, 1, BucketType.user)
