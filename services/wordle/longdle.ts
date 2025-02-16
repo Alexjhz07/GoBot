@@ -4,11 +4,14 @@ import axios from 'axios';
 // The vocabulary of the game alongside allowed entry words
 const VALID_WORDS_LIST: string[] = fs.readFileSync('./assets/longdle_game_words.txt', { encoding: 'utf-8', flag: 'r' }).split('\n')
 const VALID_ENTRY_LIST: string[] = fs.readFileSync('./assets/longdle_entry_words.txt', { encoding: 'utf-8', flag: 'r' }).split('\n')
+const VALID_CUSTOM_WORDS: string[] = fs.readFileSync('./assets/longdle_custom_words.txt', { encoding: 'utf-8', flag: 'r' }).split('\n')
 const VALID_WORDS_DICT: any = {}
 const VALID_ENTRY_DICT: any = {}
+const VALID_CUSTOM_DICT: any = {}
 
 VALID_WORDS_LIST.map((word) => VALID_WORDS_DICT[word] = true)
 VALID_ENTRY_LIST.map((word) => VALID_ENTRY_DICT[word] = true)
+VALID_CUSTOM_WORDS.map((word) => VALID_CUSTOM_DICT[word] = true)
 
 // Max reward calculation: BASE * len(word)
 // Divided by 2 for each incorrect guess
@@ -121,7 +124,7 @@ export default class Longdle {
             this.players[user_id] = new PlayerCache()
             cache = this.players[user_id]
         }
-        if (!(VALID_WORDS_DICT[guess] || VALID_ENTRY_DICT[guess]) || guess.length > gc.word_length) return {"status": "invalid-guess","word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results};
+        if (!(VALID_WORDS_DICT[guess] || VALID_ENTRY_DICT[guess] || VALID_CUSTOM_DICT[guess]) || guess.length > gc.word_length) return {"status": "invalid-guess","word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results};
         
         if (gc.word === guess) {
             const reward = Math.floor(gc.max_reward / ( 2 ** cache.guess_count))
@@ -159,6 +162,32 @@ export default class Longdle {
         cache.previous_results.push(result)
 
         return {"status": "miss", "guess": guess.split(""), "word_length": gc.word_length, "answer": gc.word, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "result": result, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
+    }
+
+    public async add_custom_word(user_id: string, word: string) {
+        try {
+            word = String(word).toUpperCase()
+        } catch (e: any) {
+            return {"status": "error", "message": `Type cast failed for word: ${e.message}`}
+        }
+
+        if (VALID_WORDS_DICT[word] || VALID_ENTRY_DICT[word] || VALID_CUSTOM_DICT[word]) {
+            return {"status": "error", "message": `${word} is already acceptable as an input`}
+        }
+
+        if (word.length > 15 || word.length < 5) {
+            return {"status": "error", "message": "The word must be between 5 and 15 characters long (inclusive)"}
+        }
+
+        if (!/^[a-zA-Z()]+$/.test(word)) {
+            return {"status": "error", "message": "The word must only contain alphabetical characters"}
+        }
+
+        fs.appendFileSync('./assets/longdle_custom_words.txt', `${word}\n`)
+        fs.appendFileSync('./assets/longdle_custom_logs.txt', `${user_id}~${word}\n`)
+        VALID_CUSTOM_DICT[word] = true
+        
+        return {"status": "success", "message": `Successfully added ${word} to the accepted inputs list`}
     }
 
     private start_new_day(new_date_string: string) {
