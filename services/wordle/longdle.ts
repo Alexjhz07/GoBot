@@ -24,7 +24,6 @@ class GameContext {
     public user_id: string
     public date_string: string
     public word: string
-    public word_list: string[]
     public word_length: number
     public max_guesses: number
     public max_reward: number
@@ -34,7 +33,6 @@ class GameContext {
         const today = new Date()
         this.date_string = today.toISOString().substring(0, 10)
         this.word = this.get_daily_word(this.date_string, this.user_id)
-        this.word_list = this.word.split("")
         this.word_length = this.word.length
         this.max_guesses = this.word_length + 1
         this.max_reward = BASE_MAX_REWARD * (this.word_length)
@@ -141,7 +139,7 @@ export default class Longdle {
             }
             cache.win_flag = true
             cache.guess_count += 1
-            return {"status": "win", "guess": gc.word_list, "matching": gc.word_length, "misplaced": 0, "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "reward": reward, "result":  Array(gc.word_length).fill("matching"), "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
+            return {"status": "win", "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "reward": reward, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
         }
 
         try {
@@ -161,7 +159,7 @@ export default class Longdle {
         cache.previous_guesses.push(guess)
         cache.previous_results.push(result)
 
-        return {"status": "miss", "guess": guess.split(""), "word_length": gc.word_length, "answer": gc.word, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "result": result, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
+        return {"status": "miss", "answer": gc.word, "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
     }
 
     public async get_word_length(user_id: string) {
