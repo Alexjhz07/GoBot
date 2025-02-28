@@ -141,6 +141,8 @@ export default class Longdle {
             }
             cache.win_flag = true
             cache.guess_count += 1
+            cache.previous_guesses.push(guess)
+            cache.previous_results.push(this.get_guess_result(gc.word, guess))
             return {"status": "win", "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "reward": reward, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
         }
 
