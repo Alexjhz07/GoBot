@@ -168,8 +168,26 @@ export default class Longdle {
 
     public async get_word_length(user_id: string) {
         const gc = new GameContext(user_id)
+
         if (gc.date_string != this.current_date_string) this.start_new_day(gc.date_string)
-        return {"length": gc.word_length}
+
+        if (!this.loaded) {
+            try {
+                await this.reload_cache(gc.date_string)
+                this.loaded = true
+            } catch (e: any) {
+                return {"status": "error", "message": e.message}
+            }
+        }
+
+        var cache = this.players[user_id]
+
+        if (!cache) {
+            this.players[user_id] = new PlayerCache()
+            cache = this.players[user_id]
+        }
+
+        return {"length": gc.word_length, "guess_remaining": gc.max_guesses - cache.guess_count, "win_flag": cache.win_flag}
     }
 
     public async add_custom_word(user_id: string, word: string) {

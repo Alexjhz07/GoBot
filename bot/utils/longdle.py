@@ -63,7 +63,10 @@ async def add_longdle_word(user_id: int, word: str) -> list:
     
 async def get_longdle_length(user_id: int):
     response = await post('wordle', 'longdle/custom/length', { "user_id": str(user_id) })
-    return f"Your daily word length is `{response['length']}`"
+    if response['win_flag']:
+        return f"Your daily word length is `{response['length']}`\nYou have already won today"
+    else:
+        return f"Your daily word length is `{response['length']}`\nYou have {response['guess_remaining']} guesses remaining today"
 
 async def get_longdle_response(user_id: int, guess: str) -> list:
     response = await post('wordle', 'longdle', { "user_id": str(user_id), "guess": guess })
