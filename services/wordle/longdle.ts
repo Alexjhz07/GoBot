@@ -115,16 +115,16 @@ export default class Longdle {
 
         var cache = this.players[user_id]
         
-        if (cache?.win_flag) return {"status": "already-won", "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "reward": gc.max_reward / ( 2 ** (cache.guess_count - 1)), "answer": gc.word, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
-        if (cache?.guess_count >= gc.max_guesses) return {"status": "out-of-tries", "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "answer": gc.word, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
+        if (cache?.win_flag) return {"status": "already-won", "date_string": this.current_date_string, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "reward": gc.max_reward / ( 2 ** (cache.guess_count - 1)), "answer": gc.word, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
+        if (cache?.guess_count >= gc.max_guesses) return {"status": "out-of-tries", "date_string": this.current_date_string, "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "answer": gc.word, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
 
         if (!cache) {
             this.players[user_id] = new PlayerCache()
             cache = this.players[user_id]
         }
 
-        if (!(VALID_WORDS_DICT[guess] || VALID_ENTRY_DICT[guess] || VALID_CUSTOM_DICT[guess])) return {"status": "invalid-guess", "message": "Invalid entry word (Not in accepted inputs)", "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results};
-        if (guess.length > gc.word_length) return {"status": "invalid-guess", "message": `Guess was ${guess.length} but maximum allowed length is ${gc.word_length}`, "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results};
+        if (!(VALID_WORDS_DICT[guess] || VALID_ENTRY_DICT[guess] || VALID_CUSTOM_DICT[guess])) return {"status": "invalid-guess", "date_string": this.current_date_string, "message": "Invalid entry word (Not in accepted inputs)", "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results};
+        if (guess.length > gc.word_length) return {"status": "invalid-guess", "date_string": this.current_date_string, "message": `Guess was ${guess.length} but maximum allowed length is ${gc.word_length}`, "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results};
         
         if (gc.word === guess) {
             const reward = Math.floor(gc.max_reward / ( 2 ** cache.guess_count))
@@ -143,7 +143,7 @@ export default class Longdle {
             cache.guess_count += 1
             cache.previous_guesses.push(guess)
             cache.previous_results.push(this.get_guess_result(gc.word, guess))
-            return {"status": "win", "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "reward": reward, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
+            return {"status": "win", "date_string": this.current_date_string, "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "reward": reward, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
         }
 
         try {
@@ -163,7 +163,7 @@ export default class Longdle {
         cache.previous_guesses.push(guess)
         cache.previous_results.push(result)
 
-        return {"status": "miss", "answer": gc.word, "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
+        return {"status": "miss", "date_string": this.current_date_string, "answer": gc.word, "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
     }
 
     public async get_word_length(user_id: string) {
@@ -187,7 +187,7 @@ export default class Longdle {
             cache = this.players[user_id]
         }
 
-        return {"length": gc.word_length, "guess_remaining": gc.max_guesses - cache.guess_count, "win_flag": cache.win_flag}
+        return {"date_string": this.current_date_string, "length": gc.word_length, "guess_remaining": gc.max_guesses - cache.guess_count, "win_flag": cache.win_flag}
     }
 
     public async add_custom_word(user_id: string, word: string) {

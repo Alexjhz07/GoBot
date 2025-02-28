@@ -131,6 +131,7 @@ def _generate_win(response: any):
         description=wrap_list([title, body_main, _render_game_raw(response)]),
         color=0xffd500
     )
+    embed.set_footer(text=f"Game: {response['date_string']} (Resets 4am EST)")
     return embed
 
 def _generate_already_won(response: any):
@@ -140,6 +141,7 @@ def _generate_already_won(response: any):
         description=wrap_list([title, body_main, _render_game_raw(response)]), 
         color=0xffd500
     )
+    embed.set_footer(text=f"Game: {response['date_string']} (Resets 4am EST)")
     return embed
 
 def _generate_miss(response: any):
@@ -156,7 +158,7 @@ def _generate_miss(response: any):
             description=wrap_list([title, body_main, _render_game_raw(response)]), 
             color=0x5539cc
         )
-    embed.set_footer(text=LONGDLE_FOOTER)
+    embed.set_footer(text=f"Game: {response['date_string']} (Resets 4am EST)")
 
     return embed
 
@@ -166,6 +168,7 @@ def _generate_out_of_tries(response: any):
         description=wrap_list([title, _render_game_raw(response)]) + f"\nCome back next tomorrow for more exciting puzzles!\nToday's word for you was ||`{response['answer']}`||", 
         color=0xffffff
     )
+    embed.set_footer(text=f"Game: {response['date_string']} (Resets 4am EST)")
 
     return embed
 
@@ -177,7 +180,7 @@ def _generate_invalid_guess(response: any):
         description=wrap_list([title, body_main, _render_game_raw(response)]), 
         color=0xffffff
     )
-    embed.set_footer(text=LONGDLE_FOOTER)
+    embed.set_footer(text=f"Game: {response['date_string']} (Resets 4am EST)")
 
     return embed
 
