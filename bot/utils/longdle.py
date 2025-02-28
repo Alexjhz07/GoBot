@@ -125,23 +125,23 @@ def _generate_win(response: any):
     title=get_ansi_raw("Winner", style=ANSI_Style.bold_underline, color=ANSI_Color.yellow)
     body_main=get_ansi_raw(f"You completed the daily longdle in {response['guess_count']} guesses and gained {response['reward'] / 100} peanuts 🎉 Thanks for playing today, come back tomorrow for another puzzle!")
     embed = Embed(
-        description=wrap_list([title, body_main]),
+        description=wrap_list([title, body_main, _render_game_raw(response)]),
         color=0xffd500
     )
     return embed
 
 def _generate_already_won(response: any):
     title=get_ansi_raw("Already Won", style=ANSI_Style.bold_underline, color=ANSI_Color.yellow)
-    body_main=get_ansi_raw(f"You already completed the daily longdle in {response['guess_count']} guesses and gained {response['reward'] / 100} peanuts 🎉 Thanks for playing today, come back tomorrow for another puzzle!\nToday's word for you was {response['answer']}")
+    body_main=get_ansi_raw(f"You already completed the daily longdle in {response['guess_count']} guesses and gained {response['reward'] / 100} peanuts 🎉 Thanks for playing today, come back tomorrow for another puzzle!\n\nToday's word for you was {response['answer']}")
     embed = Embed(
-        description=wrap_list([title, body_main]), 
+        description=wrap_list([title, body_main, _render_game_raw(response)]), 
         color=0xffd500
     )
     return embed
 
 def _generate_miss(response: any):
     title = get_ansi_raw('Miss', style=ANSI_Style.bold_underline, color=ANSI_Color.blue)
-    body_main=get_ansi_raw(f"Today's word is {response['word_length']} letters long. In Longdle, this can be the name of a well-known entity, i.e. the name of a company, person, or other entity.\n\nReminder that your guess can be 5 - {response['word_length']} characters long. You have {response['guess_remaining']} guesses remaining today.")
+    body_main=get_ansi_raw(f"Today's word is {response['word_length']} letters long. In Longdle, this can be the name of a well-known entity, i.e. the name of a company, person, or other entity.\n\nReminder that your guess can be 6 - {response['word_length']} characters long. You have {response['guess_remaining']} guesses remaining today.")
     
     if response['guess_remaining'] == 0:
         embed = Embed(
@@ -157,10 +157,10 @@ def _generate_miss(response: any):
 
     return embed
 
-def _generate_out_of_tries(resp: any):
+def _generate_out_of_tries(response: any):
+    title=get_ansi_raw("Out of Tries", style=ANSI_Style.bold_underline, color=ANSI_Color.white)
     embed = Embed(
-        title="Out of tries", 
-        description=f"Come back next tomorrow for more exciting puzzles!\nToday's word for you was ||`{resp['answer']}`||", 
+        description=wrap_list([title, _render_game_raw(response)]) + f"\nCome back next tomorrow for more exciting puzzles!\nToday's word for you was ||`{response['answer']}`||", 
         color=0xffffff
     )
 
@@ -168,7 +168,7 @@ def _generate_out_of_tries(resp: any):
 
 def _generate_invalid_guess(response: any):
     title = get_ansi_raw('Invalid Guess', style=ANSI_Style.bold_underline, color=ANSI_Color.white)
-    body_main=get_ansi_raw(f"Today's word is {response['word_length']} letters long. In Longdle, this can be the name of a well-known entity, i.e. the name of a company, person, or other entity.\n\nReminder that your guess can be 5 - {response['word_length']} characters long")
+    body_main=get_ansi_raw(f"Message: {response['message']}\n\nToday's word is {response['word_length']} letters long. In Longdle, this can be the name of a well-known entity, i.e. the name of a company, person, or other entity.\n\nReminder that your guess can be 6 - {response['word_length']} characters long. You have {response['guess_remaining']} guesses remaining today.")
     
     embed = Embed(
         description=wrap_list([title, body_main, _render_game_raw(response)]), 
@@ -178,10 +178,10 @@ def _generate_invalid_guess(response: any):
 
     return embed
 
-def _generate_error(resp: any):
+def _generate_error(response: any):
     embed = Embed(
         title="Error", 
-        description=f"An error occurred, please contact Alex to fix the situation.\nMessage: {resp['message']}", 
+        description=f"An error occurred, please contact Alex to fix the situation.\nMessage: {response['message']}", 
         color=0xff0000
     )
     
