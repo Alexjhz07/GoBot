@@ -23,6 +23,7 @@ class GameContext {
     constructor(user_id: string) {
         this.user_id = user_id
         const today = new Date()
+        today.setUTCHours(today.getUTCHours() - 9);
         this.date_string = today.toISOString().substring(0, 10)
         this.word = this.get_daily_word(this.date_string, this.user_id)
         this.word_list = this.word.split("")
@@ -59,6 +60,7 @@ export default class Wordle {
 
     constructor() {
         const today = new Date()
+        today.setUTCHours(today.getUTCHours() - 9);
         this.current_date_string = today.toISOString().substring(0, 10)
     }
 
