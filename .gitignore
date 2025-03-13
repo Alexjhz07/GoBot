@@ -2,6 +2,7 @@
 test/
 .env
 cluster/
+.vscode
 
 # For Node Services
 node_modules/
