@@ -17,6 +17,9 @@ VALID_CUSTOM_WORDS.map((word) => VALID_CUSTOM_DICT[word] = true)
 // Divided by 2 for each incorrect guess
 const BASE_MAX_REWARD: number = 80000
 
+const MINIMUM_WORD_LENGTH = 5
+const MAXIMUM_WORD_LENGTH = 15
+
 const LETTER_BIT_MAP: any = {'A': 1, 'B': 2, 'C': 4, 'D': 8, 'E': 16, 'F': 32, 'G': 64, 'H': 128, 'I': 256, 'J': 512, 'K': 1024, 'L': 2048, 'M': 4096, 'N': 8192, 'O': 16384, 'P': 32768, 'Q': 65536, 'R': 131072, 'S': 262144, 'T': 524288, 'U': 1048576, 'V': 2097152, 'W': 4194304, 'X': 8388608, 'Y': 16777216, 'Z': 33554432}
 
 // Class to generate a unique game for each player based on the date
@@ -125,8 +128,9 @@ export default class Longdle {
             cache = this.players[user_id]
         }
 
+        if (guess.length > gc.word_length) return {"status": "invalid-guess", "date_string": this.current_date_string, "message": `Guess was ${guess.length} letters but maximum length is ${gc.word_length}`, "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results};
+        if (guess.length < MINIMUM_WORD_LENGTH) return {"status": "invalid-guess", "date_string": this.current_date_string, "message": `Guess was ${guess.length} letters but minimum length is ${MINIMUM_WORD_LENGTH}`, "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results};
         if (!(VALID_WORDS_DICT[guess] || VALID_ENTRY_DICT[guess] || VALID_CUSTOM_DICT[guess])) return {"status": "invalid-guess", "date_string": this.current_date_string, "message": "Invalid entry word (Not in accepted inputs)", "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results};
-        if (guess.length > gc.word_length) return {"status": "invalid-guess", "date_string": this.current_date_string, "message": `Guess was ${guess.length} but maximum allowed length is ${gc.word_length}`, "word_length": gc.word_length, "guess_count": cache.guess_count, "guess_remaining": gc.max_guesses - cache.guess_count, "alpha_bits": cache.valid_letter_map, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results};
         
         if (gc.word === guess) {
             const reward = Math.floor(gc.max_reward / ( 2 ** cache.guess_count))
@@ -203,8 +207,8 @@ export default class Longdle {
             return {"status": "error", "message": `${word} is already acceptable as an input`}
         }
 
-        if (word.length > 15 || word.length < 6) {
-            return {"status": "error", "message": "The word must be between 6 and 15 characters long (inclusive)"}
+        if (word.length > MAXIMUM_WORD_LENGTH || word.length < MINIMUM_WORD_LENGTH) {
+            return {"status": "error", "message": `The word must be between ${MINIMUM_WORD_LENGTH} and ${MAXIMUM_WORD_LENGTH} characters long (inclusive)`}
         }
 
         if (!/^[a-zA-Z()]+$/.test(word)) {

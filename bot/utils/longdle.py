@@ -16,7 +16,7 @@ LONDGLE_INTRO = f"""{get_ansi_raw("Welcome to Longdle, the expanded version of W
 
 {get_ansi_raw("Use")} {get_ansi_raw(";longlength", color=ANSI_Color.pink)} {get_ansi_raw("or")} {get_ansi_raw(";ll", color=ANSI_Color.pink)} {get_ansi_raw("at the start of the day to obtain your word length of the day.")}
 
-{get_ansi_raw("The length of the daily word can be anywhere from 5 to 15 characters long. This information will be provided to you every time, and you will recieve more guesses based on how long the word is. There are also higher potential rewards for words of a greater length!")}
+{get_ansi_raw("The length of the daily word can be anywhere from 6 to 15 characters long. This information will be provided to you every time, and you will receive more guesses based on how long the word is. There are also higher potential rewards for words of a greater length!")}
 
 {get_ansi_raw("Your guess must have a length between 5 and the length of the word of the day. For example, if your the word of the day is 10 characters long, your guess can be 5, 7 or or 10 characters long but not 11 or 4.")}
 
@@ -37,7 +37,7 @@ LONDGLE_INTRO = f"""{get_ansi_raw("Welcome to Longdle, the expanded version of W
 
 {get_ansi_raw("If a word should be an acceptable input but isn't currently, please use")} {get_ansi_raw(";longadd word_goes_here", color=ANSI_Color.pink)} {get_ansi_raw("to add the word into the acceptable inputs list. You will be able to use that word in your guess, but please use this command appropriately.")}
 
-{get_ansi_raw("If a word is not fit for the game, please DM me and I will remove it from the list. Examples include: company names that not everyone will know, places that people not everyone will know, or words that are generally inappropriate.")}
+{get_ansi_raw("If a word is not fit for the game, please DM me and I will remove it from the list. Examples include: company names that are relatively unknown, locations that are relatively unknown, or words that are generally inappropriate.")}
 
 {get_ansi_raw('With all that being said, I hope you have fun playing this "expansion" of Wordle!', color=ANSI_Color.green)}
 """
@@ -146,7 +146,7 @@ def _generate_already_won(response: any):
 
 def _generate_miss(response: any):
     title = get_ansi_raw('Miss', style=ANSI_Style.bold_underline, color=ANSI_Color.blue)
-    body_main=get_ansi_raw(f"Today's word is {response['word_length']} letters long. In Longdle, this can be the name of a well-known entity, i.e. the name of a company, person, or other entity.\n\nReminder that your guess can be 6 - {response['word_length']} characters long. You have {response['guess_remaining']} guesses remaining today.")
+    body_main=get_ansi_raw(f"Today's word is {response['word_length']} letters long. In Longdle, this could be the name of a well-known entity, i.e. the name of a company, person, or other entity.\n\nReminder that your guess can be 5 - {response['word_length']} characters long. You have {response['guess_remaining']} guesses remaining today.")
     
     if response['guess_remaining'] == 0:
         embed = Embed(
@@ -174,7 +174,7 @@ def _generate_out_of_tries(response: any):
 
 def _generate_invalid_guess(response: any):
     title = get_ansi_raw('Invalid Guess', style=ANSI_Style.bold_underline, color=ANSI_Color.white)
-    body_main=get_ansi_raw(f"Message: {response['message']}\n\nToday's word is {response['word_length']} letters long. In Longdle, this can be the name of a well-known entity, i.e. the name of a company, person, or other entity.\n\nReminder that your guess can be 6 - {response['word_length']} characters long. You have {response['guess_remaining']} guesses remaining today.")
+    body_main=get_ansi_raw(f"Reason: {response['message']}\n\nToday's word is {response['word_length']} letters long. In Longdle, this could be the name of a well-known entity, i.e. the name of a company, person, or other entity.\n\nReminder that your guess can be 5 - {response['word_length']} characters long. You have {response['guess_remaining']} guesses remaining today.")
     
     embed = Embed(
         description=wrap_list([title, body_main, _render_game_raw(response)]), 
