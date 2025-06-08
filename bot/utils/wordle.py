@@ -45,7 +45,7 @@ def _generate_already_won(resp: any):
 def _generate_miss(resp: any):
     embed = Embed(
         title=_get_title(resp['matching'], resp['misplaced']), 
-        description=f"Nice try, but not quite there.\nYou have {6 - resp['guess_count']} guesses remaining\n\nGrey = This letter is not in the word\nBlue = This letter is in the word but is in the wrong spot\nGreen = This letter is in the word and is in the right spot", 
+        description=f"Nice try, but not quite there.\nYou have {6 - resp['guess_count']} guesses remaining", 
         color=0x5539cc
     )
     embed.set_footer(text='Rewards are higher for winning with fewer guesses:\n4k, 2k, 1k, 500, 250, 125')
