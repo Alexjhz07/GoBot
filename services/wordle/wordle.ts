@@ -52,9 +52,16 @@ class GameContext {
     }
 }
 
+class PlayerCache {
+    public win_flag: boolean = false
+    public guess_count: number = 0
+    public previous_guesses: string[] = []
+    public previous_results: string[][] = []
+}
+
 // Class that handles the business logic of our Wordle game
 export default class Wordle {
-    private players: any = {}
+    private players: { [key: string]: PlayerCache } = {}
     private loaded: boolean = false;
     private current_date_string: string
 
@@ -77,21 +84,27 @@ export default class Wordle {
 
         if (!this.loaded) {
             try {
-                await this.fetch_guess_counts(gc.date_string)
+                await this.reload_cache(gc.date_string)
                 this.loaded = true
             } catch (e: any) {
                 return {"status": "error", "message": e.message}
             }
         }
-        
-        if (this.players[user_id]?.win_flag) return {"status": "already-won", "guess_count": this.players[user_id].guess_count, "reward": WIN_REWARDS[this.players[user_id].guess_count - 1], "answer": gc.word}
-        if (this.players[user_id]?.guess_count >= 6) return {"status": "out-of-tries", "guess_count": this.players[user_id].guess_count, "answer": gc.word}
 
-        if (!this.players[user_id]) this.players[user_id] = {"win_flag": 0, "guess_count": 0}
-        if (!(VALID_ENTRY_DICT[guess] || VALID_WORDS_DICT[guess])) return {"status": "invalid-guess", "guess_count": this.players[user_id].guess_count};
+        var cache = this.players[user_id]
+        
+        if (cache?.win_flag) return {"status": "already-won", "guess_count": cache.guess_count, "reward": WIN_REWARDS[cache.guess_count - 1], "answer": gc.word, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
+        if (cache?.guess_count >= 6) return {"status": "out-of-tries", "guess_count": cache.guess_count, "answer": gc.word, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
+
+        if (!cache) {
+            this.players[user_id] = new PlayerCache()
+            cache = this.players[user_id]
+        }
+
+        if (!(VALID_ENTRY_DICT[guess] || VALID_WORDS_DICT[guess])) return {"status": "invalid-guess", "guess_count": cache.guess_count, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results};
         
         if (gc.word === guess) {
-            const reward = WIN_REWARDS[this.players[user_id].guess_count]
+            const reward = WIN_REWARDS[cache.guess_count]
             try {
                 await axios.post("http://localhost:3815/api/v1/exec", {"queries": [
                     "INSERT INTO wordle_games (user_id, guess_word, date_string, win_flag) VALUES ($1, $2, $3, True)",
@@ -103,9 +116,11 @@ export default class Wordle {
             } catch (e: any) {
                 return {"status": "error", "message": `Correct guess but error communicating with db for reward: ${e.message}`}
             }
-            this.players[user_id].win_flag = 1
-            this.players[user_id].guess_count += 1
-            return {"status": "win", "guess": gc.word_list, "matching": gc.word_length, "misplaced": 0, "guess_count": this.players[user_id].guess_count, "reward": reward, "result": ["matching", "matching", "matching", "matching", "matching"]}
+            cache.win_flag = true
+            cache.guess_count += 1
+            cache.previous_guesses.push(guess)
+            cache.previous_results.push(this.get_guess_result(gc.word, guess))
+            return {"status": "win", "guess": gc.word_list, "matching": gc.word_length, "misplaced": 0, "guess_count": cache.guess_count, "reward": reward, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
         }
 
         try {
@@ -117,36 +132,65 @@ export default class Wordle {
         } catch (e: any) {
             return {"status": "error", "message": `error communicating with db: ${e.message}`}
         }
-        this.players[user_id].guess_count += 1
+        cache.guess_count += 1
 
         let tracker: any = {}
         for (let i = 0; i < gc.word_length; i++) !tracker[gc.word[i]] ? tracker[gc.word[i]] = 1 : tracker[gc.word[i]] += 1
         
         let guess_list = guess.split("") 
-        let result = guess.split("")
 
         let matching = 0
         let misplaced = 0
         // Record Matching Characters
         for (let i = 0; i < gc.word_length; i++) {
             if (guess_list[i] === gc.word_list[i]) {
-                result[i] = "matching"
                 tracker[guess_list[i]] -= 1
+                matching += 1
+            } 
+        }
+        // Record Misplaced Characters
+        for (let i = 0; i < gc.word_length; i++) {
+            if (guess_list[i] !== gc.word_list[i] && tracker[guess_list[i]] != undefined && tracker[guess_list[i]] > 0) {
+                misplaced += 1
+                tracker[guess_list[i]] -= 1
+            }
+        } 
+
+        const result = this.get_guess_result(gc.word, guess)
+        cache.previous_guesses.push(guess)
+        cache.previous_results.push(result)
+
+        return {"status": "miss", "matching": matching, "misplaced": misplaced, "guess_count": cache.guess_count, "previous_guesses": cache.previous_guesses, "previous_results": cache.previous_results}
+    }
+
+    private get_guess_result(correct_string: string, guess_string: string) {
+        let tracker: any = {}
+        for (let i = 0; i < correct_string.length; i++) !tracker[correct_string[i]] ? tracker[correct_string[i]] = 1 : tracker[correct_string[i]] += 1
+        
+        let result = guess_string.split("")
+
+        let matching = 0
+        let misplaced = 0
+        // Record Matching Characters
+        for (let i = 0; i < correct_string.length && i < guess_string.length; i++) {
+            if (guess_string.charAt(i) === correct_string.charAt(i)) {
+                result[i] = "matching"
+                tracker[guess_string.charAt(i)] -= 1
                 matching += 1
             } else {
                 result[i] = "absent"
             }
         }
         // Record Misplaced Characters
-        for (let i = 0; i < gc.word_length; i++) {
-            if (guess_list[i] !== gc.word_list[i] && tracker[guess_list[i]] != undefined && tracker[guess_list[i]] > 0) {
+        for (let i = 0; i <  correct_string.length && i < guess_string.length; i++) {
+            if (guess_string.charAt(i) !== correct_string.charAt(i) && tracker[guess_string.charAt(i)] != undefined && tracker[guess_string.charAt(i)] > 0) {
                 result[i] = "misplaced"
                 misplaced += 1
-                tracker[guess_list[i]] -= 1
+                tracker[guess_string.charAt(i)] -= 1
             }
-        } 
+        }
 
-        return {"status": "miss", "guess": guess_list, "matching": matching, "misplaced": misplaced, "guess_count": this.players[user_id].guess_count, "result": result}
+        return result
     }
 
     private start_new_day(new_date_string: string) {
@@ -155,17 +199,35 @@ export default class Wordle {
         this.current_date_string = new_date_string
     }
 
-    private async fetch_guess_counts(date_string: string) {
+    private async reload_cache(date_string: string) {
         try {
             let res = await axios.post("http://localhost:3815/api/v1/query", {"queries": [
-                "SELECT user_id, COUNT(date_string) FROM wordle_games WHERE date_string=$1 GROUP BY user_id",
+                "SELECT user_id, guess_word FROM wordle_games WHERE date_string=$1",
                 "SELECT user_id FROM wordle_games WHERE date_string=$1 AND win_flag=true GROUP BY user_id"
             ], "arguments": [
                 [date_string],
                 [date_string]
             ]})
-            res.data.responses[0].map((i: any) => this.players[i.user_id] = {"win_flag": 0, "guess_count": Number(i.count)})
-            res.data.responses[1].map((i: any) => this.players[i.user_id].win_flag = 1)
+
+            for (const r of res.data.responses[0]) {
+                const player_id = r.user_id
+                if (!this.players[player_id]) {
+                    this.players[player_id] = new PlayerCache()
+                }
+
+                const gc = new GameContext(player_id)
+
+                const guess = r.guess_word
+                const daily = gc.word
+                const result = this.get_guess_result(daily, guess)
+
+                this.players[player_id].previous_guesses.push(guess)
+                this.players[player_id].previous_results.push(result)
+                
+                this.players[player_id].guess_count += 1
+            }
+
+            res.data.responses[1].map((i: any) => this.players[i.user_id].win_flag = true)
         } catch (e: any) {
             throw new Error(`error communicating with db: ${e.message}`)
         }
