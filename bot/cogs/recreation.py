@@ -35,11 +35,8 @@ class Recreation(Cog):
     @commands.command(brief='A pleasant game of wordle', aliases=['w'], ignore_extra=False)
     @commands.cooldown(1, 1, BucketType.user)
     async def wordle(self, ctx: Context, guess: str):
-        resp = await get_wordle_response(ctx.author.id, guess)
-        if len(resp) == 1:
-            await ctx.reply(embed=resp[0])
-        else:
-            await ctx.reply(embed=resp[0], view=resp[1])
+        embed, file = await get_wordle_response(ctx.author.id, guess)
+        await ctx.reply(embed=embed, file=file)
 
     @commands.command(brief='An intense game of longdle', aliases=['l', 'long'], ignore_extra=False)
     @commands.cooldown(1, 1, BucketType.user)
